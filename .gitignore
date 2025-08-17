@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django stuff
+db.sqlite3
+*.sqlite3
+media/
+
+# Migrations
+*/migrations/*
+!*/migrations/__init__.py   # keep the __init__.py so Django still sees the package
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Other
+*.log
