@@ -18,3 +18,13 @@ media/
 
 # Other
 *.log
+
+# Database
+db.sqlite3
+
+# Cache
+__pycache__/
+
+# Django migrations (keep only __init__.py)
+*/migrations/*
+!*/migrations/__init__.py
