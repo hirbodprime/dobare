@@ -114,16 +114,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-import os
-from pathlib import Path
+STATIC_URL = 'static/'
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_ROOT = '../dobare/static/'
 
-# URL prefix must include the app path
-STATIC_URL = "/dobare/static/"
-
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "public/static"
 
 
 MEDIA_URL = '/media/'

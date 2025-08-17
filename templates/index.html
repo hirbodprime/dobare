@@ -1237,100 +1237,100 @@ function showPage(id, cb=null){
 
     const form=document.getElementById('send-clothes-form');
 // جلوگیری از نصب دوباره در صورت دوباره لود شدن اسکریپت
-if (!window.__sendHandlerInstalled) {
-  window.__sendHandlerInstalled = true;
+// if (!window.__sendHandlerInstalled) {
+//   window.__sendHandlerInstalled = true;
 
-  const form = document.getElementById('send-clothes-form');
-  const submitBtn = form.querySelector('button[type="submit"]');
+//   const form = document.getElementById('send-clothes-form');
+//   const submitBtn = form.querySelector('button[type="submit"]');
 
-  function updateState(){
-    const ok = form.checkValidity();
-    submitBtn.disabled = !ok;
-    submitBtn.classList.toggle('opacity-60', !ok);
-    submitBtn.classList.toggle('cursor-not-allowed', !ok);
-  }
-  updateState();
-  form.addEventListener('input',  updateState, {passive:true});
-  form.addEventListener('change', updateState, {passive:true});
+//   function updateState(){
+//     const ok = form.checkValidity();
+//     submitBtn.disabled = !ok;
+//     submitBtn.classList.toggle('opacity-60', !ok);
+//     submitBtn.classList.toggle('cursor-not-allowed', !ok);
+//   }
+//   updateState();
+//   form.addEventListener('input',  updateState, {passive:true});
+//   form.addEventListener('change', updateState, {passive:true});
 
-  // پیام خطای فارسی
-  ['size','full_photo','fabric_photo'].forEach(name=>{
-    const el = form.querySelector(`[name="${name}"]`);
-    if(!el) return;
-    el.addEventListener('invalid', ()=> el.setCustomValidity('پر کردن این فیلد اجباری است.'));
-    el.addEventListener('input',  ()=> el.setCustomValidity(''));
-  });
+//   // پیام خطای فارسی
+//   ['size','full_photo','fabric_photo'].forEach(name=>{
+//     const el = form.querySelector(`[name="${name}"]`);
+//     if(!el) return;
+//     el.addEventListener('invalid', ()=> el.setCustomValidity('پر کردن این فیلد اجباری است.'));
+//     el.addEventListener('input',  ()=> el.setCustomValidity(''));
+//   });
 
-  // اگر این توابع را نداری، نال‌اپ کن
-  const showOverlay = window.showOverlay || function(){};
-  const hideOverlay = window.hideOverlay || function(){};
-  const setProgress = window.setProgress || function(){};
-  const maybeCompressToFD = window.maybeCompressToFD || (async ()=>{});
+//   // اگر این توابع را نداری، نال‌اپ کن
+//   const showOverlay = window.showOverlay || function(){};
+//   const hideOverlay = window.hideOverlay || function(){};
+//   const setProgress = window.setProgress || function(){};
+//   const maybeCompressToFD = window.maybeCompressToFD || (async ()=>{});
 
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault();
+//   form.addEventListener('submit', async (e)=>{
+//     e.preventDefault();
 
-    if(!form.checkValidity()){
-      form.reportValidity();
-      return;
-    }
+//     if(!form.checkValidity()){
+//       form.reportValidity();
+//       return;
+//     }
 
-    submitBtn.disabled = true;
-    const oldTxt = submitBtn.textContent;
-    submitBtn.textContent = 'در حال ارسال…';
+//     submitBtn.disabled = true;
+//     const oldTxt = submitBtn.textContent;
+//     submitBtn.textContent = 'در حال ارسال…';
 
-    const action = form.getAttribute('action') || '/';
-    const fd = new FormData(form);
+//     const action = form.getAttribute('action') || '/';
+//     const fd = new FormData(form);
 
-    // (اختیاری) فشرده‌سازی کلاینتی برای سرعت
-    showOverlay('در حال آماده‌سازی تصاویر…'); setProgress(5);
-    await maybeCompressToFD(fd, 'full_photo');   setProgress(15);
-    await maybeCompressToFD(fd, 'fabric_photo'); setProgress(25);
-    await maybeCompressToFD(fd, 'brand_photo');  setProgress(30);
+//     // (اختیاری) فشرده‌سازی کلاینتی برای سرعت
+//     showOverlay('در حال آماده‌سازی تصاویر…'); setProgress(5);
+//     await maybeCompressToFD(fd, 'full_photo');   setProgress(15);
+//     await maybeCompressToFD(fd, 'fabric_photo'); setProgress(25);
+//     await maybeCompressToFD(fd, 'brand_photo');  setProgress(30);
 
-    showOverlay('در حال آپلود…');
+//     showOverlay('در حال آپلود…');
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', action, true);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', action, true);
+//     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-    xhr.upload.onprogress = (e)=>{
-      if(e.lengthComputable){
-        const p = Math.min(99, Math.round((e.loaded / e.total) * 100));
-        setProgress(p);
-      }
-    };
+//     xhr.upload.onprogress = (e)=>{
+//       if(e.lengthComputable){
+//         const p = Math.min(99, Math.round((e.loaded / e.total) * 100));
+//         setProgress(p);
+//       }
+//     };
 
-    xhr.onload = ()=>{
-      hideOverlay();
-      submitBtn.disabled = false;
-      submitBtn.textContent = oldTxt;
+//     xhr.onload = ()=>{
+//       hideOverlay();
+//       submitBtn.disabled = false;
+//       submitBtn.textContent = oldTxt;
 
-      if(xhr.status >= 200 && xhr.status < 300){
-        if (typeof showPage === 'function') showPage('success-message');
-        form.reset();
-        updateState();
-        // پاک‌کردن نام فایل‌ها اگر نشان می‌دهی
-        try{
-          updateFileName({files:[]}, 'file-name-1');
-          updateFileName({files:[]}, 'file-name-2');
-          updateFileName({files:[]}, 'file-name-brand');
-        }catch(_){}
-      }else{
-        alert('ارسال ناموفق بود. لطفاً دوباره تلاش کنید.');
-      }
-    };
+//       if(xhr.status >= 200 && xhr.status < 300){
+//         if (typeof showPage === 'function') showPage('success-message');
+//         form.reset();
+//         updateState();
+//         // پاک‌کردن نام فایل‌ها اگر نشان می‌دهی
+//         try{
+//           updateFileName({files:[]}, 'file-name-1');
+//           updateFileName({files:[]}, 'file-name-2');
+//           updateFileName({files:[]}, 'file-name-brand');
+//         }catch(_){}
+//       }else{
+//         alert('ارسال ناموفق بود. لطفاً دوباره تلاش کنید.');
+//       }
+//     };
 
-    xhr.onerror = ()=>{
-      hideOverlay();
-      submitBtn.disabled = false;
-      submitBtn.textContent = oldTxt;
-      alert('اختلال شبکه رخ داد.');
-    };
+//     xhr.onerror = ()=>{
+//       hideOverlay();
+//       submitBtn.disabled = false;
+//       submitBtn.textContent = oldTxt;
+//       alert('اختلال شبکه رخ داد.');
+//     };
 
-    xhr.send(fd);
-  });
-}
+//     xhr.send(fd);
+//   });
+// }
 
 
     function updateFileName(input,id){const p=document.getElementById(id); p.textContent=input.files.length>0?input.files[0].name:'';}
