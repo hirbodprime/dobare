@@ -124,7 +124,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # This is the folder where collectstatic will put all static files
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "public/static"
 
 
 MEDIA_URL = '/media/'
