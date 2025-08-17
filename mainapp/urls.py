@@ -18,7 +18,3 @@ urlpatterns = [
     path("products/", products_page, name="products_page"),
 
 ]
-
-# این بخش برای نمایش فایل‌های آپلود شده در حالت توسعه (Debug) ضروری است
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
