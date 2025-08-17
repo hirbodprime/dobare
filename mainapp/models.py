@@ -3,6 +3,7 @@
 from django.db import models
 from django.urls import reverse
 import uuid
+
 # مدلی برای ذخیره اطلاعات لباس‌های ارسال شده
 class SubmittedCloth(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
