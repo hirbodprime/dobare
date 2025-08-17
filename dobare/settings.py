@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-p-5pwcu@)$iycajbxi#&i)nozr4ubv#z2j_i%u(l^p(^w(oh*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.hirbots.com','hirbots.com']
+ALLOWED_HOSTS = ['www.hirbots.com','hirbots.com','127.0.0.1:8000','127.0.0.1']
 
 
 # Application definition

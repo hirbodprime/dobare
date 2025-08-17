@@ -1400,52 +1400,9 @@ document.querySelectorAll('a.nav-link').forEach(a=>{
       }
     }
   }
+  window.compressImage = compressImage;
+  window.maybeCompressToFD = maybeCompressToFD;
 
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-
-    const action = form.getAttribute('action') || '/'; // ویوت همینیه که داری
-    const fd = new FormData(form);
-
-    showOverlay('در حال آماده‌سازی تصاویر…'); setProgress(5);
-    // فشرده‌سازی روی کلاینت → آپلود خیلی سریع‌تر می‌شود
-    await maybeCompressToFD(fd, 'full_photo');   setProgress(15);
-    await maybeCompressToFD(fd, 'fabric_photo'); setProgress(25);
-    await maybeCompressToFD(fd, 'brand_photo');  setProgress(30);
-
-    showOverlay('در حال آپلود…');
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', action, true);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // فقط جهت تشخیص سمت بک
-
-    xhr.upload.onprogress = (e)=>{
-      if(e.lengthComputable){
-        // تا 99% پیش برو (باقی زمان پردازش سمت سرور)
-        const p = Math.min(99, Math.round((e.loaded / e.total) * 100));
-        setProgress(p);
-      }
-    };
-
-    xhr.onload = ()=>{
-      hideOverlay();
-      if(xhr.status >= 200 && xhr.status < 300){
-        // بلافاصله موفقیت را نشان بده
-        if (typeof showPage === 'function') {
-          showPage('success-message');
-        } else {
-          // اگر تک‌صفحه نیستی:
-          alert('ثبت شد!');
-        }
-        form.reset();
-      }else{
-        alert('ارسال ناموفق بود. لطفاً دوباره تلاش کنید.');
-      }
-    };
-
-    xhr.onerror = ()=>{ hideOverlay(); alert('اختلال شبکه رخ داد.'); };
-    xhr.send(fd);
-  });
 })();
 
     // --- خط EKG زیر تیتر ---
