@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-p-5pwcu@)$iycajbxi#&i)nozr4ubv#z2j_i%u(l^p(^w(oh*5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['www.hirbots.com','hirbots.com']
 
 
 # Application definition
@@ -114,16 +114,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# URL prefix must include the app path
+STATIC_URL = "/dobare/static/"
 
-# This is the folder where collectstatic will put all static files
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "public/static"
 
 
