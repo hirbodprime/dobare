@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>محصولات | دوباره</title>
+  <link rel="preload" href="{% static 'fonts/iranyekanx/IRANYekanX-FaNum-Regular.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{% static 'fonts/iranyekanx/iranyekanx.css' %}">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <style>
+    :root{
+      --olive:#4b5320;
+      --beige:#d9c7a1;
+      --red:#66001f;
+    }
+    body{ font-family:'Shabnam','IRANYekanX','Vazirmatn',sans-serif; background:var(--beige); color:var(--olive); overflow-x:hidden; }
+    .btn-red{ background:var(--red); color:#fff; } .btn-red:hover{ filter:brightness(.95); }
+
+    /* افکت آویزونی روی خود کارت (بدون نخ بالای کارت) */
+    .swing-card{ transform-origin: top center; animation: swing var(--dur,8s) ease-in-out infinite; animation-delay: var(--delay,0s); will-change: transform, box-shadow; }
+    .swing-card:hover{ animation-play-state:paused; transform: rotate(0deg) translateY(-2px) scale(1.01); }
+    @keyframes swing{ 0%,100%{ transform:rotate(-1.2deg);} 50%{ transform:rotate(1.2deg);} }
+
+    .card{ background:#fff; border-radius:1rem; box-shadow:0 10px 30px rgba(0,0,0,.08); transition:box-shadow .3s ease, transform .3s ease; }
+    .card:hover{ box-shadow:0 16px 40px rgba(0,0,0,.12); }
+
+    /* نخ اسکرولِ سمت چپ (همون قبلی) */
+    #scroll-thread{
+      position:fixed; left:0; top:0; width:64px; height:100vh; z-index:50; pointer-events:none; opacity:.95;
+    }
+    @media (max-width:768px){
+      #scroll-thread{ width:36px; opacity:.9; }
+      #scroll-thread path{ stroke-width:2.2; }
+      #scroll-thread #needle rect{ width:1.6px; }
+      #scroll-thread #needle circle{ r:3.2; }
+    }
+
+    ::-webkit-scrollbar{ width:8px; } ::-webkit-scrollbar-track{ background:var(--beige); }
+    ::-webkit-scrollbar-thumb{ background:var(--olive); border-radius:10px; }
+/* مثل صفحه اصلی */
+.square-button{
+  border-radius:.75rem;
+  position:relative;
+  overflow:hidden;
+  transition:all .3s;
+}
+.square-button::after{
+  content:'';
+  position:absolute; top:50%; left:50%;
+  width:200%; height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,.2) 0%,rgba(255,255,255,0) 60%);
+  transform:translate(-50%,-50%) scale(0);
+  transition:transform .5s;
+}
+.square-button:hover::after{ transform:translate(-50%,-50%) scale(1); }
+.square-button:hover{ animation:heartbeat 1.5s infinite ease-in-out; }
+@keyframes heartbeat{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.05) } }
+
+  </style>
+</head>
+
+<body>
+<header id="header" class="sticky top-0 z-40 bg-[color:var(--beige)]/80 backdrop-blur-lg shadow-sm">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="/" class="cursor-pointer inline-flex items-center jiggle-hover">
+      <img src="{% static 'logo/dobare.svg' %}" alt="دوباره" class="h-16 w-auto">
+    </a>
+
+    <nav class="hidden md:flex items-center space-x-reverse space-x-6">
+      <a href="/#how-it-works"  class="nav-link text-[color:var(--olive)] hover:text-[color:var(--olive)]/70 transition-colors duration-300 font-medium">دوباره چطور کار میکنه</a>
+      <a href="/products"       class="nav-link text-[color:var(--olive)] hover:text-[color:var(--olive)]/70 transition-colors duration-300 font-medium">محصولات</a>
+      <a href="/#mission"       class="nav-link text-[color:var(--olive)] hover:text-[color:var(--olive)]/70 transition-colors duration-300 font-medium">داستان ما</a>
+      <a href="/#micro-factory" class="nav-link text-[color:var(--olive)] hover:text-[color:var(--olive)]/70 transition-colors duration-300 font-medium">مایکرو-فکتوری</a>
+    </nav>
+
+    <a href="/#send-clothes-page" class="square-button btn-red font-bold py-3 px-6 shadow-lg">
+      لباست رو بفرست
+    </a>
+  </div>
+</header>
+  <!-- نخ اسکرول -->
+  <svg id="scroll-thread" viewBox="0 0 72 1000" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="threadGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#e53e3e"/><stop offset="100%" stop-color="#66001f"/>
+      </linearGradient>
+    </defs>
+    <path id="thread-path"
+      d="M36 0 C 28 60, 44 120, 36 180 C 28 240, 44 300, 36 360
+         C 28 420, 44 480, 36 540 C 28 600, 44 660, 36 720
+         C 28 780, 44 840, 36 900 C 28 960, 44 1020, 36 1080"
+      fill="none" stroke="url(#threadGrad)" stroke-width="3" stroke-linecap="round"
+      stroke-dasharray="4000" stroke-dashoffset="4000"/>
+    <g id="needle" transform="translate(30,0)">
+      <rect x="6" y="-12" width="2" height="24" rx="1" fill="#66001f"></rect>
+      <circle cx="7" cy="0" r="4" fill="#fbf8f5" stroke="#66001f" stroke-width="2"></circle>
+    </g>
+  </svg>
+
+  <!-- Header -->
+  <main>
+    <section class="container mx-auto px-6 pt-10 pb-4">
+      <h1 class="text-3xl md:text-4xl font-extrabold text-[color:var(--olive)]">محصولات دوباره</h1>
+      <p class="mt-3 text-[color:var(--olive)]/70">هر کارت کمی تکون می‌خوره؛ داستانش رو با یک کلیک بخون.</p>
+    </section>
+
+    <section class="container mx-auto px-6 pb-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {% for product in products %}
+        <article class="swing-card card overflow-hidden group" style="--delay: {{ forloop.counter0 }}00ms; --dur: {{ 7|add:forloop.counter0 }}s;">
+          <div class="relative h-64 sm:h-72 md:h-80 flex items-center justify-center bg-white">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                 class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105" loading="lazy"/>
+          </div>
+
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-[color:var(--olive)] mb-2">{{ product.name }}</h3>
+
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-semibold text-[color:var(--olive)]">
+                <span class="js-price" data-price="{{ product.price }}"></span> تومان
+              </p>
+<button type="button"
+        class="square-button btn-red text-white text-sm px-3 py-2 font-bold shadow"
+        data-story-btn
+        data-id="{{ product.id }}"
+        {% if product.story %}data-story="{{ product.story|escapejs }}"{% endif %}
+        data-name="{{ product.name|escapejs }}">
+  داستان لباس
+</button>
+            </div>
+          </div>
+        </article>
+        {% empty %}
+        <p class="text-center col-span-3 text-[color:var(--olive)]/70">فعلاً محصولی برای نمایش نیست.</p>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-[color:var(--olive)] text-[color:var(--beige)] mt-10">
+    <div class="container mx-auto px-6 py-10">
+      <div class="grid md:grid-cols-3 gap-8 text-center md:text-right">
+        <div>
+          <ul class="space-y-2">
+            <li><a href="/#how-it-works" class="hover:opacity-80 inline-block">دوباره چطور کار میکنه؟</a></li>
+            <li><a href="/#products" class="hover:opacity-80 inline-block">محصولات</a></li>
+            <li><a href="/#micro-factory" class="hover:opacity-80 inline-block">مایکرو-فکتوری</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg mb-4">دوباره در فضای مجازی</h4>
+          <div class="flex justify-center md:justify-start gap-4">
+            <a href="#" class="hover:opacity-80"><i data-feather="instagram"></i></a>
+            <a href="#" class="hover:opacity-80"><i data-feather="twitter"></i></a>
+            <a href="#" class="hover:opacity-80"><i data-feather="linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center opacity-60 border-t border-white/20 mt-8 pt-6">
+        <p>&copy; 1403 | تمام حقوق برای استارتاپ دوباره محفوظ است.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- مودال داستان -->
+  <div id="story-modal" class="fixed inset-0 z-[1000] hidden">
+    <div class="absolute inset-0 bg-black/40" data-close-story></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 id="story-title" class="text-xl md:text-2xl font-bold text-[color:var(--olive)]">داستان لباس</h3>
+          <button class="btn-red px-3 py-1.5 text-sm rounded-lg" data-close-story>بستن</button>
+        </div>
+        <div id="story-body" class="text-[color:var(--olive)]/90 leading-8 whitespace-pre-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+    feather.replace();
+
+    // قیمت‌ها به فارسی
+    document.querySelectorAll('.js-price').forEach(el=>{
+      const n=Number((el.dataset.price||'0').toString().replace(/\D/g,'')); 
+      el.textContent=new Intl.NumberFormat('fa-IR').format(n);
+    });
+
+    // مودال داستان
+    (function(){
+      const modal  = document.getElementById('story-modal');
+      const bodyEl = document.getElementById('story-body');
+      const titleEl= document.getElementById('story-title');
+
+      function openStory(name, story){
+        titleEl.textContent = `داستان «${name}»`;
+        bodyEl.textContent  = story && story.trim() ? story : 'هنوز داستانی ثبت نشده است.';
+        modal.classList.remove('hidden'); document.body.style.overflow = 'hidden';
+      }
+      function closeStory(){
+        modal.classList.add('hidden'); document.body.style.overflow = '';
+      }
+      modal.querySelectorAll('[data-close-story]').forEach(el=>el.addEventListener('click', closeStory));
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) closeStory(); });
+
+      document.querySelectorAll('[data-story-btn]').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+          const id   = btn.dataset.id;
+          const name = btn.dataset.name || '';
+          let story  = btn.dataset.story || '';
+          if(!story){
+            try{
+              const res = await fetch(`/products/${id}/story/`, {headers:{'Accept':'application/json'}});
+              if(res.ok){ const data = await res.json(); story = data.story || ''; }
+            }catch(e){}
+          }
+          openStory(name, story);
+        });
+      });
+    })();
+
+    // نخ اسکرول: sync با اسکرول
+    (function(){
+      const path   = document.getElementById('thread-path');
+      const needle = document.getElementById('needle');
+      if(!path || !needle) return;
+
+      let len = path.getTotalLength();
+      let ticking = false;
+
+      function measure(){ len = path.getTotalLength(); requestUpdate(); }
+      function update(){
+        const docH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+        const winH = window.innerHeight;
+        const maxS = Math.max(1, docH - winH);
+        const p    = Math.min(1, Math.max(0, window.scrollY / maxS));
+        const dash = len;
+        path.setAttribute('stroke-dasharray', dash);
+        path.setAttribute('stroke-dashoffset', (1 - p) * dash);
+        const pos = path.getPointAtLength(p * len);
+        needle.setAttribute('transform', `translate(${pos.x-6},${pos.y})`);
+        ticking = false;
+      }
+      function requestUpdate(){ if(!ticking){ ticking = true; requestAnimationFrame(update); } }
+
+      window.addEventListener('scroll', requestUpdate, { passive:true });
+      window.addEventListener('resize', () => { measure(); }, { passive:true });
+      measure(); update();
+    })();
+  </script>
+  <!-- <script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  if (params.get('open') === 'send') {
+    if (typeof showPage === 'function') {
+      requestAnimationFrame(()=> showPage('send-clothes-page'));
+    } else {
+      document.getElementById('send-clothes-page')?.scrollIntoView({behavior:'smooth'});
+    }
+    if (history.replaceState) {
+      params.delete('open');
+      const newUrl = location.pathname + (params.toString()? '?'+params.toString() : '') + location.hash;
+      history.replaceState({}, '', newUrl);
+    }
+  }
+})();
+</script> -->
+</body>
+</html>

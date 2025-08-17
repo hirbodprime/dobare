@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ product.name }} | دوباره</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-[#4b5320]">
+  <div class="container mx-auto px-6 py-10">
+    <a href="/" class="text-sm text-[#4b5320]/70 hover:underline">← بازگشت</a>
+
+    <div class="grid md:grid-cols-2 gap-8 mt-6">
+      <div class="bg-white rounded-2xl p-4 shadow">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-auto object-contain"/>
+      </div>
+
+      <div class="space-y-4">
+        <h1 class="text-3xl font-extrabold">{{ product.name }}</h1>
+        <p class="text-lg"><span class="js-price" data-price="{{ product.price }}"></span> تومان</p>
+
+        <div class="leading-8">
+          <h2 class="font-bold text-xl mb-2">داستان لباس</h2>
+          <p class="whitespace-pre-line">{{ product.story|default:"هنوز داستانی ثبت نشده است." }}</p>
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <!-- QR کد آدرس همین صفحه -->
+          <img src="{% url 'product_qr' product.public_id %}" alt="QR" class="w-24 h-24 border rounded-xl"/>
+          <div class="text-sm text-[#4b5320]/70 break-all">
+            با اسکن این کد همین صفحه باز می‌شود.<br/>
+            لینک: <span class="underline">{{ request.build_absolute_uri }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // فرمت تومان
+    document.querySelectorAll('.js-price').forEach(el=>{
+      const n=Number((el.dataset.price||'0').toString().replace(/\D/g,'')); 
+      el.textContent = new Intl.NumberFormat('fa-IR').format(n);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دوباره | مد پایدار، سبک منحصر به فرد</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Vazirmatn) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'fonts/iranyekanx/iranyekanx.css' %}">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Anime.js for Advanced Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <!-- Custom Styles & Tailwind Config -->
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #fbf8f5;
+            color: #1a3a3a;
+            overflow-x: hidden;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f0e9e0; }
+        ::-webkit-scrollbar-thumb { background: #1a3a3a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e68a00; }
+
+        /* Canvas for background animation */
+        #bg-animation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        
+        /* Ensure hero content is above canvas */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Prepare elements for animation */
+        .animated-section, .animated-card, .form-group, .form-upload, .form-button {
+            opacity: 0;
+        }
+
+        /* Hide sections by default */
+        #send-clothes-page, #success-message {
+            display: none;
+        }
+        
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-primary': '#031927',
+                        'brand-secondary': '#f0e9e0',
+                        'brand-accent': '#66001f', // Updated accent color
+                        'brand-light': '#fbf8f5',
+                        'brand-dark': '#031927',
+                        'brand-red': '#e53e3e',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-light">
+
+    <!-- Header -->
+    <header id="header" class="sticky top-0 z-50 bg-brand-light/80 backdrop-blur-lg shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- <a href="#" onclick="showPage('main-page')" class="text-4xl font-extrabold text-brand-primary tracking-tighter cursor-pointer">دوباره</a>
+              -->
+            <a href="#" onclick="showPage('main-page')" class="cursor-pointer inline-flex items-center">
+                <img src="{% static 'logo/dobare.svg' %}" alt="دوباره" class="h-16 w-auto">
+            </a>
+            <nav class="hidden md:flex items-center space-x-reverse space-x-6">
+                <a href="#how-it-works" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">دوباره چطور کار میکنه</a>
+                <a href="#products" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">محصولات</a>
+                <a href="#mission" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">داستان ما</a>
+            </nav>
+            <button onclick="showPage('send-clothes-page')" class="bg-brand-accent text-white font-bold py-2 px-5 rounded-full hover:bg-brand-primary transition-all duration-300 transform hover:scale-105 shadow-lg">
+                لباست رو بفرست
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- ======================= -->
+        <!--      HOME PAGE          -->
+        <!-- ======================= -->
+        <div id="main-page">
+            <!-- Hero Section -->
+            <section class="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+                <canvas id="bg-animation-canvas"></canvas>
+                <div class="hero-content container mx-auto px-6">
+                    <h1 id="hero-slogan" class="text-5xl md:text-7xl font-extrabold text-brand-primary mb-6">قصه هارو دوباره بپوش</h1>
+                    <p class="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-brand-primary/80">
+                       هر لباس دوباره فقط پوشیدنی نیست، یک روایتِ.
+                       <br/>
+                       داستانی از ادم ها، مکان ها و لحظه ها که حالا در کالبدی  نو به زندگی برمیگردد.
+                    </p>
+                    <div class="mt-10">
+                        <button id="hero-cta-button" class="bg-brand-primary text-white font-bold py-4 px-8 rounded-full text-lg hover:bg-brand-accent transition-all duration-300 transform hover:scale-105 shadow-xl">
+                            قصتو بپوش
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other sections remain the same but will be animated on scroll -->
+            <section id="how-it-works" class="bg-brand-secondary py-20 animated-section">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-12">
+                        <h3 class="text-3xl md:text-4xl font-bold text-brand-dark">مسیر دوباره</h3>
+                        <p class="mt-3 text-lg text-brand-primary/70">فقط در سه مرحله، به دنیای مد پایدار وارد شوید.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-10 text-center">
+                        <div class="animated-card bg-brand-light p-8 rounded-2xl shadow-lg border border-gray-200">
+                            <div class="bg-brand-accent text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-bold">۱</div>
+                            <h4 class="text-2xl font-bold mb-2 text-brand-dark">ارسال اطلاعات</h4>
+                            <p class="text-brand-primary/80">مشخصات و تصاویر لباس‌هایی که دیگر نمی‌پوشید را برای ما بفرستید.</p>
+                        </div>
+                        <div class="animated-card bg-brand-light p-8 rounded-2xl shadow-lg border border-gray-200">
+                            <div class="bg-brand-accent text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-bold">۲</div>
+                            <h4 class="text-2xl font-bold mb-2 text-brand-dark">دریافت اعتبار</h4>
+                            <p class="text-brand-primary/80">ما لباس شما را ارزش‌گذاری کرده و معادل آن، اعتبار خرید به حساب شما اضافه می‌کنیم.</p>
+                        </div>
+                        <div class="animated-card bg-brand-light p-8 rounded-2xl shadow-lg border border-gray-200">
+                            <div class="bg-brand-accent text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-bold">۳</div>
+                            <h4 class="text-2xl font-bold mb-2 text-brand-dark">خرید دوباره</h4>
+                            <p class="text-brand-primary/80">از اعتبار خود برای خرید محصولات منحصر به فرد ما که از همین پارچه‌ها ساخته شده‌اند، استفاده کنید.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="products" class="py-20 animated-section">
+                <div class="container mx-auto px-6">
+                     <div class="text-center mb-12">
+                        <h3 class="text-3xl md:text-4xl font-bold text-brand-dark">ضربان دوباره</h3>
+                        <p class="mt-3 text-lg text-brand-primary/70">هر لباس، یک داستان جدید. ساخته شده از پارچه‌هایی با گذشته.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {% for product in products %}
+                        <div class="animated-card bg-white rounded-2xl overflow-hidden shadow-lg group transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-gray-200">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-80 object-cover transition-transform duration-300 group-hover:scale-110">
+                            <div class="p-6">
+                                <h4 class="text-xl font-bold text-brand-dark">{{ product.name }}</h4>
+<p class="text-brand-accent font-semibold mt-2">
+  <span class="js-price" data-price="{{ product.price }}"></span> تومان
+</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center col-span-3 text-brand-primary/70">در حال حاضر محصولی برای نمایش وجود ندارد.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section id="mission" class="bg-brand-primary text-brand-light py-20 animated-section">
+                <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2">
+                        <h3 class="text-3xl md:text-4xl font-bold mb-4">پیوند دوباره با نخ قرمز</h3>
+                        <br/>
+                        <p class="text-lg text-brand-secondary" style="line-height: 2;">
+                            در دوباره، ما باور داریم هر تــــکه ای که از زندگی گذشته‌اش عبور کرده هنــــوز حرفی برای گفتن داره
+                            <br/>
+                            لباس هایی که به ما می‌سپارید، قصه های شمارا با خودشان می‌آورند; خاطراتی دوخته شده در بافت پارچه، رنگ هایی که روزی شاهد لحظه‌های شما بوده‌اند.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://placehold.co/600x400/f0e9e0/1a3a3a?text=خلاقیت+و+پایداری" alt="تیم دوباره" class="rounded-2xl shadow-2xl">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ============================ -->
+        <!--      SEND CLOTHES PAGE       -->
+        <!-- ============================ -->
+        <div id="send-clothes-page" class="container mx-auto px-6 py-16">
+            <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-2xl border border-gray-200">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-dark">لباست رو به یک داستان جدید تبدیل کن</h2>
+                    <p class="mt-3 text-lg text-brand-primary/70">فرم زیر را پر کنید تا اولین قدم را برای دادن حیاتی دوباره به لباستان بردارید.</p>
+                </div>
+                
+                <form id="send-clothes-form" class="space-y-8">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="brand" class="block text-lg font-semibold mb-2 text-brand-dark">برند لباس</label>
+                        <p class="text-sm text-gray-500 mb-2">معمولا روی تگ پشت یقه یا کنار لباس نوشته شده است.</p>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="brand" name="brand" placeholder="مثال: زارا، نایکی" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition">
+                            <button type="button" onclick="setBrandUnknown()" class="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm whitespace-nowrap">نمیدونم</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                         <label class="block text-lg font-semibold mb-2 text-brand-dark">عکس از مارک لباس</label>
+                         <div class="flex items-center gap-2">
+                            <label id="brand-photo-label" class="flex flex-col items-center justify-center w-full h-24 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-100 transition">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i data-feather="camera" class="w-6 h-6 text-gray-400"></i>
+                                    <p class="text-sm text-gray-500"><span class="font-semibold">برای آپلود کلیک کنید</span></p>
+                                </div>
+                                <input type="file" id="brand-photo" name="brand_photo" class="hidden" onchange="updateFileName(this, 'file-name-brand')">
+                            </label>
+                             <button type="button" onclick="toggleBrandless()" class="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm whitespace-nowrap">برند نداره</button>
+                         </div>
+                         <p id="file-name-brand" class="text-sm text-center mt-2 text-gray-500"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="size" class="block text-lg font-semibold mb-2 text-brand-dark">سایز</label>
+                        <input type="text" id="size" name="size" placeholder="مثال: Medium, 38, L" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issues" class="block text-lg font-semibold mb-2 text-brand-dark">پارگی یا خوردگی (اختیاری)</label>
+                        <textarea id="issues" name="issues" rows="3" placeholder="مثال: یک لکه کوچک روی آستین راست، کمی ساییدگی در سر زانو" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-accent focus:border-brand-accent transition"></textarea>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="form-upload">
+                            <label class="block text-lg font-semibold mb-2 text-brand-dark">عکس کلی از لباس</label>
+                            <label class="flex flex-col items-center justify-center w-full h-40 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-100 transition">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i data-feather="upload-cloud" class="w-10 h-10 mb-3 text-gray-400"></i>
+                                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">برای آپلود کلیک کنید</span></p>
+                                </div>
+                                <input type="file" name="full_photo" class="hidden" onchange="updateFileName(this, 'file-name-1')">
+                            </label>
+                            <p id="file-name-1" class="text-sm text-center mt-2 text-gray-500"></p>
+                        </div>
+                        <div class="form-upload">
+                            <label class="block text-lg font-semibold mb-2 text-brand-dark">عکس نزدیک از پارچه</label>
+                            <label class="flex flex-col items-center justify-center w-full h-40 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-100 transition">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i data-feather="zoom-in" class="w-10 h-10 mb-3 text-gray-400"></i>
+                                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">برای آپلود کلیک کنید</span></p>
+                                </div>
+                                <input type="file" name="fabric_photo" class="hidden" onchange="updateFileName(this, 'file-name-2')">
+                            </label>
+                             <p id="file-name-2" class="text-sm text-center mt-2 text-gray-500"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-button">
+                        <button type="submit" class="w-full bg-brand-accent text-white font-bold text-lg py-4 px-8 rounded-full hover:bg-brand-primary transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            ارسال برای ارزش‌گذاری
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ======================= -->
+        <!--    SUCCESS MESSAGE      -->
+        <!-- ======================= -->
+        <div id="success-message" class="container mx-auto px-6 py-20 text-center">
+             <div class="max-w-2xl mx-auto bg-white p-12 rounded-2xl shadow-2xl border border-gray-200">
+                <div class="text-green-500 mb-5">
+                    <i data-feather="check-circle" class="w-20 h-20 mx-auto"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-brand-dark mb-4">درخواست شما ثبت شد!</h2>
+                <p class="text-lg text-brand-primary/80 mb-8">
+                    ممنون! کارشناسان ما به زودی لباس شما را بررسی کرده و میزان اعتبار هدیه را از طریق ایمیل به شما اطلاع می‌دهند.
+                </p>
+                <button onclick="showPage('main-page')" class="bg-brand-primary text-white font-bold py-3 px-8 rounded-full hover:bg-brand-accent transition-all duration-300">
+                    بازگشت به صفحه اصلی
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-brand-secondary mt-20">
+        <div class="container mx-auto px-6 py-10">
+            <div class="grid md:grid-cols-3 gap-8 text-center md:text-right">
+                <!-- <div>
+                    <h3 class="text-2xl font-bold mb-4">دوباره</h3>
+                    <p class="text-brand-secondary/70">تغییر چهره مد، یک لباس در هر زمان.</p>
+                </div> -->
+                <div>
+                    <!-- <h4 class="font-bold text-lg mb-4">لینک‌های سریع</h4> -->
+                    <ul class="space-y-2">
+                        <li><a href="#how-it-works" class="nav-link hover:text-brand-accent transition-colors">دوباره چطور کار میکنه؟</a></li>
+                        <li><a href="#" onclick="showPage('send-clothes-page')" class="hover:text-brand-accent transition-colors">پیگیری سفارش</a></li>
+                        <li><a href="#products" class="nav-link hover:text-brand-accent transition-colors">محصولات</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">دوباره در فضای مجازی</h4>
+                    <div class="flex justify-center md:justify-start space-x-reverse space-x-4">
+                        <a href="#" class="hover:text-brand-accent transition-colors"><i data-feather="instagram"></i></a>
+                        <a href="#" class="hover:text-brand-accent transition-colors"><i data-feather="twitter"></i></a>
+                        <a href="#" class="hover:text-brand-accent transition-colors"><i data-feather="linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center text-brand-secondary/50 border-t border-brand-secondary/20 mt-8 pt-6">
+                <p>&copy; 1403 | تمام حقوق برای استارتاپ دوباره محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+<script>
+document.querySelectorAll('.js-price').forEach(el => {
+  const n = Number((el.dataset.price || '0').toString().replace(/\D/g,''));
+  el.textContent = new Intl.NumberFormat('fa-IR').format(n); // ۱,۰۰۰,۰۰۰ → با جداکننده فارسی
+});
+</script>
+    <script>
+        // --- Feather Icons Initialization ---
+        feather.replace();
+
+        // --- GLOBAL ELEMENTS ---
+        const mainPage = document.getElementById('main-page');
+        const sendClothesPage = document.getElementById('send-clothes-page');
+        const successMessage = document.getElementById('success-message');
+        let currentPage = mainPage;
+
+        // --- CANVAS BACKGROUND ANIMATION ---
+        const canvas = document.getElementById('bg-animation-canvas');
+        const ctx = canvas.getContext('2d');
+        let patches = [];
+        const numPatches = 80; // Increased for a fuller shape
+        const colors = ['#66001F', '#3423A6']; // Updated canvas colors
+        let isAssembling = false;
+        let animationFrameId;
+        let assemblyTimeline;
+
+        // A more detailed, recognizable T-shirt shape
+        const tShirtShape = [
+            // Body Outline
+            {x: -0.15, y: 0.1}, {x: -0.15, y: 0.2}, {x: -0.15, y: 0.3}, {x: -0.15, y: 0.4}, {x: -0.15, y: 0.5},
+            {x: 0.15, y: 0.1}, {x: 0.15, y: 0.2}, {x: 0.15, y: 0.3}, {x: 0.15, y: 0.4}, {x: 0.15, y: 0.5},
+            {x: -0.1, y: 0.5}, {x: 0, y: 0.5}, {x: 0.1, y: 0.5},
+
+            // Body Fill
+            {x: -0.05, y: 0.15}, {x: -0.05, y: 0.25}, {x: -0.05, y: 0.35}, {x: -0.05, y: 0.45},
+            {x: 0.05, y: 0.15}, {x: 0.05, y: 0.25}, {x: 0.05, y: 0.35}, {x: 0.05, y: 0.45},
+            {x: 0, y: 0.2}, {x: 0, y: 0.3}, {x: 0, y: 0.4},
+
+            // Left Sleeve
+            {x: -0.25, y: 0.15}, {x: -0.2, y: 0.15},
+            {x: -0.25, y: 0.25}, {x: -0.2, y: 0.25}, {x: -0.15, y: 0.25},
+
+            // Right Sleeve
+            {x: 0.25, y: 0.15}, {x: 0.2, y: 0.15},
+            {x: 0.25, y: 0.25}, {x: 0.2, y: 0.25}, {x: 0.15, y: 0.25},
+
+            // Neckline
+            {x: -0.08, y: 0.05}, {x: 0, y: 0.02}, {x: 0.08, y: 0.05},
+            {x: -0.05, y: 0.08}, {x: 0.05, y: 0.08},
+        ];
+        while(tShirtShape.length < numPatches) {
+            // Fill remaining spots with random points within the body
+            const randomPoint = tShirtShape[Math.floor(Math.random() * tShirtShape.length)];
+            tShirtShape.push({x: randomPoint.x * Math.random(), y: randomPoint.y * Math.random()});
+        }
+
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createPatches() {
+            patches = [];
+            for (let i = 0; i < numPatches; i++) {
+                const size = Math.random() * 35 + 10;
+                patches.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: size,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * Math.PI * 2,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8,
+                    targetIndex: i,
+                    targetX: (canvas.width / 2) + tShirtShape[i].x * 300, // Increased scale
+                    targetY: (canvas.height / 2) + tShirtShape[i].y * 300 - 150, // Adjusted position
+                });
+            }
+        }
+
+        function animateBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            patches.forEach(p => {
+                if (!isAssembling) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                }
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+            });
+            
+            animationFrameId = requestAnimationFrame(animateBackground);
+        }
+        
+        function assemble(shouldAssemble) {
+            isAssembling = shouldAssemble;
+            
+            if (assemblyTimeline) {
+                assemblyTimeline.pause();
+            }
+
+            assemblyTimeline = anime.timeline({
+                complete: () => {
+                    if (!shouldAssemble) {
+                        isAssembling = false;
+                    }
+                }
+            });
+
+            patches.forEach((p) => {
+                assemblyTimeline.add({
+                    targets: p,
+                    x: shouldAssemble ? p.targetX : Math.random() * canvas.width,
+                    y: shouldAssemble ? p.targetY : Math.random() * canvas.height,
+                    rotation: shouldAssemble ? Math.random() * 0.2 - 0.1 : Math.random() * Math.PI * 2,
+                    size: shouldAssemble ? p.size * 0.9 : p.size,
+                    duration: 1800,
+                    easing: 'easeInOutExpo',
+                }, 0);
+            });
+        }
+
+        // --- HERO & PAGE ANIMATIONS ---
+        function playHeroAnimation() {
+            // Make text visible immediately by setting opacity to 1
+            const heroElements = document.querySelectorAll('.hero-content > *');
+            heroElements.forEach(el => el.style.opacity = 1);
+        }
+
+        const animatedSections = document.querySelectorAll('.animated-section');
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const section = entry.target;
+                    const cards = section.querySelectorAll('.animated-card');
+                    const content = section.querySelectorAll('h3, p, img, h4, div:not(.animated-card)');
+                    
+                    anime({ targets: section, opacity: [0, 1], duration: 500, easing: 'linear' });
+                    anime({ targets: content, translateY: [40, 0], opacity: [0, 1], delay: anime.stagger(100), easing: 'easeOutExpo' });
+                    anime({ targets: cards, translateY: [50, 0], opacity: [0, 1], delay: anime.stagger(150, {start: 200}), easing: 'easeOutExpo' });
+                    
+                    observer.unobserve(section);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        animatedSections.forEach(section => observer.observe(section));
+
+        function showPage(pageId, onCompleteCallback = null) {
+            const newPage = document.getElementById(pageId);
+            if (!newPage || newPage === currentPage) return;
+
+            const formElements = newPage.querySelectorAll('.form-group, .form-upload, .form-button');
+            const successElements = newPage.querySelectorAll('h2, p, button, i');
+
+            anime({
+                targets: currentPage,
+                opacity: [1, 0],
+                translateY: [0, -30],
+                duration: 400,
+                easing: 'easeInExpo',
+                complete: () => {
+                    currentPage.style.display = 'none';
+                    newPage.style.display = 'block';
+                    currentPage = newPage;
+                    window.scrollTo(0, 0);
+                    
+                    anime({
+                        targets: newPage,
+                        opacity: [0, 1],
+                        translateY: [30, 0],
+                        duration: 600,
+                        easing: 'easeOutExpo',
+                        complete: () => {
+                            if (onCompleteCallback) onCompleteCallback();
+                        }
+                    });
+                    
+                    if(pageId === 'send-clothes-page' && formElements.length > 0) {
+                        anime({ targets: formElements, opacity: [0, 1], translateY: [30, 0], delay: anime.stagger(100, {start: 200}), easing: 'easeOutExpo' });
+                    }
+                    if(pageId === 'success-message' && successElements.length > 0) {
+                        const icon = newPage.querySelector('i');
+                        icon.style.transform = 'scale(0)';
+                        anime({ targets: icon, scale: [0, 1], rotate: '1turn', duration: 800, easing: 'easeOutElastic(1, .8)' });
+                        anime({ targets: newPage.querySelectorAll('h2,p,button'), opacity: [0, 1], translateY: [20, 0], delay: anime.stagger(100, {start: 300}), easing: 'easeOutExpo' });
+                    }
+                }
+            });
+        }
+        
+        const heroCtaButton = document.getElementById('hero-cta-button');
+        heroCtaButton.addEventListener('click', () => showPage('send-clothes-page'));
+        heroCtaButton.addEventListener('mouseenter', () => assemble(true));
+        heroCtaButton.addEventListener('mouseleave', () => assemble(false));
+
+        // --- FORM LOGIC ---
+        const form = document.getElementById('send-clothes-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            
+            fetch('', { // The action is the current page URL
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showPage('success-message');
+                    form.reset(); // Clear the form
+                } else {
+                    alert('خطا در ثبت اطلاعات: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('یک خطای غیرمنتظره رخ داد.');
+            });
+        });
+        
+        function updateFileName(input, pId) {
+            const pElement = document.getElementById(pId);
+            pElement.textContent = input.files.length > 0 ? input.files[0].name : '';
+        }
+
+        function setBrandUnknown() {
+            const brandInput = document.getElementById('brand');
+            brandInput.value = "نمیدونم";
+        }
+
+        function toggleBrandless() {
+            const brandPhotoInput = document.getElementById('brand-photo');
+            const brandPhotoLabel = document.getElementById('brand-photo-label');
+            const fileNameP = document.getElementById('file-name-brand');
+            const isDisabled = brandPhotoInput.disabled;
+
+            brandPhotoInput.disabled = !isDisabled;
+
+            if (!isDisabled) {
+                brandPhotoLabel.style.cursor = 'not-allowed';
+                brandPhotoLabel.style.backgroundColor = '#f3f4f6';
+                fileNameP.textContent = "این لباس برند ندارد.";
+                brandPhotoInput.value = "";
+                updateFileName(brandPhotoInput, 'file-name-brand');
+            } else {
+                brandPhotoLabel.style.cursor = 'pointer';
+                brandPhotoLabel.style.backgroundColor = '';
+                fileNameP.textContent = "";
+            }
+        }
+
+        // --- SMOOTH SCROLL ---
+        document.querySelectorAll('a.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                const scrollToTarget = () => {
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                };
+
+                if (currentPage.id !== 'main-page') {
+                    showPage('main-page', scrollToTarget);
+                } else {
+                    scrollToTarget();
+                }
+            });
+        });
+
+        // --- INITIALIZATION ---
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            patches.forEach((p) => {
+                p.targetX = (canvas.width / 2) + tShirtShape[p.targetIndex].x * 300;
+                p.targetY = (canvas.height / 2) + tShirtShape[p.targetIndex].y * 300 - 150;
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            playHeroAnimation();
+            resizeCanvas();
+            createPatches();
+            animateBackground();
+        });
+
+    </script>
+</body>
+</html>

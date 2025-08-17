@@ -1,0 +1,1729 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>دوباره | قصه هارو دوباره بپوش</title>
+  <link rel="preload" href="{% static 'fonts/iranyekanx/IRANYekanX-FaNum-Regular.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{% static 'fonts/iranyekanx/iranyekanx.css' %}">
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+
+
+
+  <!-- شبنم: فونت گرد و فانتزی -->
+  <!-- <link href="https://cdn.fontcdn.ir/Font/Persian/Shabnam/Shabnam.css" rel="stylesheet"/> -->
+  <!-- <link rel="stylesheet" href="{% static 'fonts/iranyekanx/iranyekanx.css' %}"/> -->
+
+  <!-- Icons + Anime -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <style>
+    
+    :root{
+  --c1:#acf63c; /* 60% */
+  --c2:#44344f; /* 40% */
+}
+
+body{
+  font-family:'Shabnam','IRANYekanX','Vazirmatn',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  background:#d9c7a1;          /* بژ روشن = 40% */
+  color:#4b5320;               /* زیتونی = 60% */
+  overflow-x:hidden;
+}
+
+
+.btn-red{
+  background:#66001f;  /* قرمز گزینه اول */
+  color:#fff;
+}
+
+.btn-red:hover{ filter:brightness(.94); }
+#weave-ekg{
+  position:absolute;
+  bottom:-14px;        /* اگر فاصله زیاد/کم بود اینو کم‌وزیاد کن */
+  height:26px;         /* ارتفاع خط */
+  left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+/* اسکرول‌بار */
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:#d9c7a1;}
+::-webkit-scrollbar-thumb{background:#4b5320;border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:#4b5320;}
+
+/* ==== دکمه‌های مربعی ==== */
+.square-button{
+  border-radius:.75rem;
+  position:relative;
+  overflow:hidden;
+  transition:all .3s;
+}
+.square-button::after{
+  content:'';
+  position:absolute;top:50%;left:50%;
+  width:200%;height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,.2) 0%,rgba(255,255,255,0) 60%);
+  transform:translate(-50%,-50%) scale(0);
+  transition:transform .5s;
+}
+#hero-cta-button {
+  padding: 8px 18px;   /* کوچیک‌تر از قبل */
+  font-size: 18px;     /* سایز متن ریزتر */
+  border-radius: 8px;  /* کمی گردی گوشه‌ها */
+  line-height: 1.4;    /* ارتفاع متن کمتر */
+  margin-top: -8px; /* دکمه رو میاره بالا */
+
+}
+.square-button:hover::after{ transform:translate(-50%,-50%) scale(1); }
+.square-button:hover{ animation:heartbeat 1.5s infinite ease-in-out; }
+@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+.jiggle-hover:hover{ animation:jiggle .4s infinite; }
+@keyframes jiggle{0%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}100%{transform:rotate(-1.5deg)}}
+
+.heartbeat-icon{ animation:heartbeat-icon 2.5s infinite ease-in-out; }
+@keyframes heartbeat-icon{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* ==== HERO (تیتر و نخ) ==== */
+#hero-bg{ position:absolute; inset:0; z-index:0; }    /* بوم پشت محتوا */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  margin-top: 120px; /* مقدار رو زیاد کن (60 بود، حالا 120 یا حتی بیشتر) */
+}
+
+.hero-title {
+  margin-top: 1.5rem; /* فاصله تیتر از بالا */
+}
+
+.hero-subtitle {
+  margin-top: 1rem;   /* فاصله متن از تیتر */
+}
+
+.hero-button {
+  margin-top: 2rem;   /* فاصله دکمه از متن */
+}
+.slogan-wrap{
+  position:relative;          /* ظرف نخ */
+  display:inline-block;
+  will-change:transform,opacity;
+}
+
+#hero-slogan {
+  opacity: 1;       /* قبلاً .25 بود */
+  color: #1a3a3a;   /* رنگ تیره اصلی */
+  font-weight: 800; /* بولدتر بشه */
+}
+/* نسخه‌ی دوم شعار را حذف کن تا تداخل نکند */
+#hero-slogan-reveal{ display:none; }
+
+/* نخ زیر تیتر: جای ثابت و بدون رویداد */
+#weave-thread{
+  position:absolute;
+  bottom:-14px;
+  height:26px;
+  pointer-events:none;
+  left:50%;
+  transform:translateX(-50%); /* مرکز ظرفِ تیتر */
+  width:auto;                 /* عرض را با JS ست می‌کنیم */
+}
+#weave-thread path{ stroke-dasharray:none !important; } /* اگر بعدا انیمیشن خواستی این خط را بردار */
+
+/* ==== نخ پیشرفتِ چپ صفحه ==== */
+#scroll-thread{
+  position:fixed;
+  left:env(safe-area-inset-left, 0);  /* safe-area برای ناچ‌ها */
+  top:0;
+  width:64px;
+  height:100vh;
+  z-index:50;
+  pointer-events:none;
+  opacity:.95;
+}
+
+/* نسخه موبایل: باریک‌تر و کمی کم‌رنگ‌تر */
+@media (max-width:768px){
+  #scroll-thread{
+    width:36px;
+    opacity:.9;
+  }
+  /* ظریف‌تر شدن ضخامت مسیر روی موبایل (اختیاری) */
+  #scroll-thread path{ stroke-width:2.2; }
+  #scroll-thread #needle rect{ width:1.6px; }
+  #scroll-thread #needle circle{ r:3.2; }
+}
+/* @media (max-width:768px){ #scroll-thread{ display:none; } } */
+@media (max-width: 480px) {
+  .hero-content {
+    margin-top: 60px;  /* یا حتی کمتر */
+  }
+}
+/* ==== فرم‌ها و انیمیشن‌های ساده ==== */
+.form-input-fantasy:focus{
+  border-color:#66001f;
+  box-shadow:0 0 0 3px rgba(102,0,31,.3);
+  transform:scale(1.02);
+}
+
+/* سکشن‌هایی که با اینترسکشن فیداین می‌شوند */
+.animated-section,
+.animated-card,
+.form-group,
+.form-upload,
+.form-button{ opacity:0; }
+
+/* ==== بوم‌های دیگر ==== */
+/* قبلاً #031927 بود */
+#mission-canvas{
+  width:100%;
+  height:320px;
+  background:#D9C7A1;  /* بژ */
+  border-radius:1rem;
+}
+
+#micro-factory-canvas{
+  width:100%; height:360px;
+  background:#fff;
+  border-radius:1rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+  </style>
+
+<script>
+tailwind.config = {
+  theme:{
+    extend:{
+      fontFamily:{ sans: ['IRANYekanX','system-ui','sans-serif'] },
+    colors:{
+      'brand-primary':'#4b5320',  // متن‌ها/هدینگ‌ها/خطوط
+      'brand-secondary':'#d9c7a1',// پس‌زمینه‌های روشن
+      'brand-accent':'#4b5320',   // هایلایت‌ها و نخ‌ها
+      'brand-light':'#d9c7a1',
+      'brand-dark':'#4b5320',
+      'brand-red':'#66001f'       // دکمه‌ها (بدون تغییر)
+    },
+    fontFamily:{ sans:['Shabnam','IRANYekanX','Vazirmatn','sans-serif'] }
+  }}
+}
+</script>
+</head>
+<body class="bg-brand-light">
+  <!-- vertical red thread progress -->
+  <svg id="scroll-thread" viewBox="0 0 72 1000" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="threadGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#e53e3e"/><stop offset="100%" stop-color="#66001f"/>
+      </linearGradient>
+    </defs>
+    <path id="thread-path"
+      d="M36 0 C 28 60, 44 120, 36 180 C 28 240, 44 300, 36 360
+         C 28 420, 44 480, 36 540 C 28 600, 44 660, 36 720
+         C 28 780, 44 840, 36 900 C 28 960, 44 1020, 36 1080"
+      fill="none" stroke="url(#threadGrad)" stroke-width="3" stroke-linecap="round"
+      stroke-dasharray="4000" stroke-dashoffset="4000"/>
+    <g id="needle" transform="translate(30,0)">
+      <rect x="6" y="-12" width="2" height="24" rx="1" fill="#66001f"></rect>
+      <circle cx="7" cy="0" r="4" fill="#fbf8f5" stroke="#66001f" stroke-width="2"></circle>
+    </g>
+  </svg>
+
+  <!-- Header -->
+  <header id="header" class="sticky top-0 z-40 bg-brand-light/80 backdrop-blur-lg shadow-sm">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" onclick="showPage('main-page')" class="cursor-pointer inline-flex items-center jiggle-hover">
+        <img src="{% static 'logo/dobare.svg' %}" alt="دوباره" class="h-16 w-auto">
+      </a>
+      <nav class="hidden md:flex items-center space-x-reverse space-x-6">
+        <a href="#how-it-works" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">دوباره چطور کار میکنه</a>
+        <a href="{% url 'products_page' %}" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">محصولات</a>
+        <a href="#mission" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">داستان ما</a>
+        <a href="#micro-factory" class="nav-link text-brand-primary hover:text-brand-accent transition-colors duration-300 font-medium">مایکرو-فکتوری</a>
+      </nav>
+      <button onclick="showPage('send-clothes-page')" class="square-button btn-red font-bold py-3 px-6 shadow-lg">
+        لباست رو بفرست
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div id="main-page">
+      <!-- HERO -->
+      <section class="relative min-h-[90vh] flex items-center justify-center text-center overflow-hidden">
+        <canvas id="hero-bg" class="w-full h-full"></canvas>
+        <div class="hero-content container mx-auto px-6">
+          <div class="slogan-wrap">
+            <h1 id="hero-slogan" class="leading-[1.15] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-brand-primary mb-6">
+              قصه هارو دوباره بپوش
+            </h1>
+            <h1 id="hero-slogan-reveal" class="leading-[1.15] text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold">
+              قصه هارو دوباره بپوش
+            </h1>
+            <canvas id="weave-ekg"></canvas>
+          </div>
+          <p class="mt-6 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-brand-primary/80">
+            هر لباس دوباره فقط پوشیدنی نیست، یک روایتِ.
+            <br/>داستانی از ادم ها، مکان ها و لحظه ها که حالا در کالبدی  نو به زندگی برمیگردد.
+          </p>
+          <div class="mt-10">
+            <button id="hero-cta-button" class="square-button btn-red font-bold py-4 px-10 text-lg hover:opacity-95 shadow-xl">قصه‌هارو بپوش</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+<section id="how-it-works" class="bg-brand-secondary py-16 md:py-20 animated-section">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-12">
+      <h3 class="text-3xl sm:text-4xl font-bold text-brand-dark">مسیر دوباره</h3>
+      <p class="mt-3 text-lg text-brand-primary/70">فقط در سه مرحله، به دنیای مد پایدار وارد شوید.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 md:gap-10 text-center">
+      <!-- کارت 1 -->
+      <div class="animated-card bg-brand-primary text-brand-light p-8 rounded-2xl shadow-lg border border-brand-primary/20 z-10 jiggle-hover">
+        <div class="bg-brand-secondary text-brand-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 heartbeat-icon ring-2 ring-brand-primary/20">
+          <i data-feather="upload-cloud" class="w-10 h-10"></i>
+        </div>
+        <h4 class="text-xl sm:text-2xl font-bold mb-2 text-brand-light">ارسال لباس</h4>
+        <p class="text-brand-light/90 text-sm sm:text-base">
+          مشخصات و تصاویر لباس‌هایی که دیگر نمی‌پوشید را برای ما بفرستید.
+        </p>
+      </div>
+
+      <!-- کارت 2 -->
+      <div class="animated-card bg-brand-primary text-brand-light p-8 rounded-2xl shadow-lg border border-brand-primary/20 z-10 jiggle-hover">
+        <div class="bg-brand-secondary text-brand-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 heartbeat-icon ring-2 ring-brand-primary/20">
+          <i data-feather="gift" class="w-10 h-10"></i>
+        </div>
+        <h4 class="text-xl sm:text-2xl font-bold mb-2 text-brand-light">دریافت اعتبار</h4>
+        <p class="text-brand-light/90 text-sm sm:text-base">
+          ما لباس شما را ارزش‌گذاری کرده و معادل آن، اعتبار خرید به حساب شما اضافه می‌کنیم.
+        </p>
+      </div>
+
+      <!-- کارت 3 -->
+      <div class="animated-card bg-brand-primary text-brand-light p-8 rounded-2xl shadow-lg border border-brand-primary/20 z-10 jiggle-hover">
+        <div class="bg-brand-secondary text-brand-primary w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 heartbeat-icon ring-2 ring-brand-primary/20">
+          <i data-feather="shopping-bag" class="w-10 h-10"></i>
+        </div>
+        <h4 class="text-xl sm:text-2xl font-bold mb-2 text-brand-light">خرید دوباره</h4>
+        <p class="text-brand-light/90 text-sm sm:text-base">
+          از اعتبار خود برای خرید محصولات منحصر به فرد ما که از همین پارچه‌ها ساخته شده‌اند، استفاده کنید.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- PRODUCTS -->
+<section id="products" class="py-16 md:py-20 animated-section">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-12">
+      <h3 class="text-3xl sm:text-4xl font-bold text-brand-dark">ضربان دوباره</h3>
+      <p class="mt-3 text-lg text-brand-primary/70">هر لباس، یک داستان جدید. ساخته شده از پارچه‌هایی با گذشته.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for product in products %}
+      <div class="animated-card bg-white rounded-2xl overflow-hidden shadow-lg group transition-all duration-500 hover:shadow-2xl hover:!opacity-100 jiggle-hover">
+        <!-- تصویر لینک‌دار به صفحهٔ محصول -->
+        <a href="#" class="relative h-64 sm:h-72 md:h-80 flex items-center justify-center bg-white block" aria-label="{{ product.name }}">
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.name }}"
+            class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        </a>
+
+        <div class="p-6">
+          <!-- نام لینک‌دار به صفحهٔ محصول -->
+          <a href="#">
+            <h4 class="text-xl font-bold text-brand-dark mb-2">{{ product.name }}</h4>
+          </a>
+
+          <!-- ردیف قیمت + دکمه داستان + لینک مستقیم صفحه -->
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-brand-accent font-semibold">
+              <span class="js-price" data-price="{{ product.price }}"></span> تومان
+            </p>
+
+            <div class="flex items-center gap-2">
+              <button type="button"
+                      class="square-button btn-red text-white text-sm px-3 py-2"
+                      data-story-btn
+                      data-id="{{ product.id }}"
+                      {% if product.story %}data-story="{{ product.story|escapejs }}"{% endif %}
+                      data-name="{{ product.name|escapejs }}">
+                داستان لباس
+              </button>
+
+              <!-- <a href="{{ product.get_absolute_url }}" class="text-xs text-brand-dark/70 underline hover:text-brand-dark">
+                صفحهٔ لباس
+              </a> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center col-span-3 text-brand-primary/70">در حال حاضر محصولی برای نمایش وجود ندارد.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{{ product_bubbles|json_script:"mission-bubbles-data" }}
+      <!-- MISSION -->
+      <section id="mission" class="bg-brand-primary text-brand-light py-16 md:py-20 animated-section">
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <h3 class="text-3xl sm:text-4xl font-bold mb-4">پیوند دوباره با نخ قرمز</h3>
+            <p class="text-base sm:text-lg text-brand-secondary" style="line-height:2;">
+              در دوباره، ما باور داریم هر تــــکه ای که از زندگی گذشته‌اش عبور کرده هنــــوز حرفی برای گفتن داره
+              <br/>
+              لباس هایی که به ما می‌سپارید، قصه های شمارا با خودشان می‌آورند; خاطراتی دوخته شده در بافت پارچه، رنگ هایی که روزی شاهد لحظه‌های شما بوده‌اند.
+            </p>
+          </div>
+          <div class="relative">
+            <canvas id="mission-canvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- MICRO-FACTORY -->
+      <section id="micro-factory" class="py-16 md:py-20 animated-section">
+        <div class="container mx-auto px-6">
+          <div class="text-center mb-8">
+            <h3 class="text-3xl sm:text-4xl font-bold text-brand-dark">مایکرو-فکتوری دوباره</h3>
+            <p class="text-lg text-brand-primary/70">تحویل → شست‌وشو → جداسازی → دوخت →  محصول</p>
+          </div>
+          <canvas id="micro-factory-canvas"></canvas>
+          <p class="text-center text-sm text-brand-primary/60 mt-4">این نمای ساده، چرخهٔ داخلی را به‌صورت زنده و سبک نمایش می‌دهد.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- SEND PAGE -->
+    <div id="send-clothes-page" class="container mx-auto px-6 py-16" style="display:none">
+      <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 md:p-12 rounded-2xl shadow-2xl border border-gray-200">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl md:text-4xl font-bold text-brand-dark">لباست رو به یک داستان جدید تبدیل کن</h2>
+          <p class="mt-3 text-lg text-brand-primary/70">فرم زیر را پر کنید تا اولین قدم را برای دادن حیاتی دوباره به لباستان بردارید.</p>
+        </div>
+
+        <form id="send-clothes-form" class="space-y-8">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="brand" class="block text-lg font-semibold mb-2 text-brand-dark">برند لباس</label>
+            <p class="text-sm text-gray-500 mb-2">معمولا روی تگ پشت یقه یا کنار لباس نوشته شده است.</p>
+            <div class="flex items-center gap-2">
+              <input type="text" id="brand" name="brand" placeholder="مثال: زارا، نایکی" class="form-input-fantasy w-full p-3 border border-gray-300 rounded-lg transition-all duration-300">
+              <button type="button" onclick="setBrandUnknown()" class="jiggle-hover px-4 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm whitespace-nowrap">نمیدونم</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="block text-lg font-semibold mb-2 text-brand-dark">عکس از مارک لباس</label>
+            <div class="flex items-center gap-2">
+              <label id="brand-photo-label" class="flex flex-col items-center justify-center w-full h-24 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-100 transition">
+                <div class="flex items-center justify-center gap-2">
+                  <i data-feather="camera" class="w-6 h-6 text-gray-400"></i>
+                  <p class="text-sm text-gray-500"><span class="font-semibold">برای آپلود کلیک کنید</span></p>
+                </div>
+                <input type="file" id="brand-photo" name="brand_photo" class="hidden" onchange="updateFileName(this, 'file-name-brand')">
+              </label>
+              <button type="button" onclick="toggleBrandless()" class="jiggle-hover px-4 py-3 bg-gray-200 text-gray-700 rounded-lg text-sm whitespace-nowrap">برند نداره</button>
+            </div>
+            <p id="file-name-brand" class="text-sm text-center mt-2 text-gray-500"></p>
+          </div>
+
+          <div class="form-group">
+            <label for="size" class="block text-lg font-semibold mb-2 text-brand-dark">سایز</label>
+            <input type="text" required  id="size" name="size" placeholder="مثال: Medium, 38, L" class="form-input-fantasy w-full p-3 border border-gray-300 rounded-lg transition-all duration-300">
+          </div>
+
+          <div class="form-group">
+            <label for="issues" class="block text-lg font-semibold mb-2 text-brand-dark">پارگی یا خوردگی (اختیاری)</label>
+            <textarea id="issues" name="issues" rows="3" placeholder="مثال: یک لکه کوچک روی آستین راست، کمی ساییدگی در سر زانو" class="form-input-fantasy w-full p-3 border border-gray-300 rounded-lg transition-all duration-300"></textarea>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="form-upload">
+              <label class="block text-lg font-semibold mb-2 text-brand-dark">عکس کلی از لباس</label>
+              <label class="flex flex-col items-center justify-center w-full h-40 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-100 transition jiggle-hover">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <i data-feather="upload-cloud" class="w-10 h-10 mb-3 text-gray-400"></i>
+                  <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">برای آپلود کلیک کنید</span></p>
+                </div>
+                <input type="file" name="full_photo" class="hidden" required  onchange="updateFileName(this, 'file-name-1')">
+              </label>
+              <p id="file-name-1" class="text-sm text-center mt-2 text-gray-500"></p>
+            </div>
+            <div class="form-upload">
+              <label class="block text-lg font-semibold mb-2 text-brand-dark">عکس نزدیک از پارچه</label>
+              <label class="flex flex-col items-center justify-center w-full h-40 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:bg-gray-100 transition jiggle-hover">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <i data-feather="zoom-in" class="w-10 h-10 mb-3 text-gray-400"></i>
+                  <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">برای آپلود کلیک کنید</span></p>
+                </div>
+                <input type="file" name="fabric_photo" class="hidden" required  onchange="updateFileName(this, 'file-name-2')">
+              </label>
+              <p id="file-name-2" class="text-sm text-center mt-2 text-gray-500"></p>
+            </div>
+          </div>
+
+          <div class="form-button">
+            <button type="submit" class="w-full bg-brand-accent text-white font-bold text-lg py-4 px-8 shadow-lg square-button">
+              ارسال برای ارزش‌گذاری
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+<div id="success-message" class="container mx-auto px-6 py-20 text-center" style="display:none">
+  <div class="max-w-[min(100%,48rem)] w-full mx-auto bg-white p-6 sm:p-8 md:p-12 rounded-2xl shadow-2xl border border-gray-200">
+    <!-- آیکن: فقط دایره سبز + تیک -->
+    <div class="mb-6 flex justify-center">
+      <svg viewBox="0 0 96 96" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
+        <circle cx="48" cy="48" r="44" fill="none" stroke="#22c55e" stroke-width="6"></circle>
+        <path d="M30 50l12 12 24-28" fill="none" stroke="#22c55e"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="6"></path>
+      </svg>
+    </div>
+
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-dark mb-4">
+      درخواست شما ثبت شد!
+    </h2>
+
+    <p class="text-sm sm:text-base md:text-lg text-brand-primary/80 mb-8 leading-8">
+      ممنون! کارشناسان ما به زودی لباس شما را بررسی کرده و میزان اعتبار هدیه را از طریق ایمیل به شما اطلاع می‌دهند.
+    </p>
+
+    <button onclick="showPage('main-page')"
+            class="square-button btn-red font-bold py-3 px-8 rounded-full hover:opacity-95 transition-all duration-300">
+      بازگشت به صفحه اصلی
+    </button>
+  </div>
+</div>
+
+  </main>
+
+  <footer class="bg-brand-dark text-brand-secondary mt-20">
+    <div class="container mx-auto px-6 py-10">
+      <div class="grid md:grid-cols-3 gap-8 text-center md:text-right">
+        <div>
+          <ul class="space-y-2">
+            <li><a href="#how-it-works" class="nav-link hover:text-brand-accent transition-colors jiggle-hover inline-block">دوباره چطور کار میکنه؟</a></li>
+            <li><a href="#" onclick="showPage('send-clothes-page')" class="hover:text-brand-accent transition-colors jiggle-hover inline-block">پیگیری سفارش</a></li>
+            <li><a href="{% url 'products_page' %}" class="nav-link hover:text-brand-accent transition-colors jiggle-hover inline-block">محصولات</a></li>
+            <li><a href="#micro-factory" class="nav-link hover:text-brand-accent transition-colors jiggle-hover inline-block">مایکرو-فکتوری</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg mb-4">دوباره در فضای مجازی</h4>
+          <div class="flex justify-center md:justify-start space-x-reverse space-x-4">
+            <a href="#" class="hover:text-brand-accent transition-colors jiggle-hover"><i data-feather="instagram"></i></a>
+            <a href="#" class="hover:text-brand-accent transition-colors jiggle-hover"><i data-feather="twitter"></i></a>
+            <a href="#" class="hover:text-brand-accent transition-colors jiggle-hover"><i data-feather="linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center text-brand-secondary/50 border-t border-brand-secondary/20 mt-8 pt-6">
+        <p>&copy; 1403 | تمام حقوق برای استارتاپ دوباره محفوظ است.</p>
+      </div>
+    </div>
+  </footer>
+<!-- Overlay: Upload progress -->
+<div id="upload-overlay" class="fixed inset-0 z-[2000] hidden">
+  <div class="absolute inset-0 bg-black/40"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 text-center">
+      <h4 id="overlay-title" class="text-xl font-bold text-brand-dark mb-2">در حال آپلود…</h4>
+      <p id="overlay-sub" class="text-brand-primary/70 mb-4">لطفاً پنجره را نبندید.</p>
+      <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+        <div id="overlay-bar" class="h-full bg-brand-red transition-all duration-200" style="width:0%"></div>
+      </div>
+      <div id="overlay-percent" class="mt-2 text-sm text-brand-primary/70">۰٪</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* اگر هنوز قلبِ پس‌زمینه تو صفحهٔ موفقیت داری، این خط حذفش می‌کنه */
+  #success-heart{ display:none !important; }
+</style>
+<script>
+// --- Overlay utils ---
+const ovEl   = document.getElementById('upload-overlay');
+const ovBar  = document.getElementById('overlay-bar');
+const ovPct  = document.getElementById('overlay-percent');
+const ovTtl  = document.getElementById('overlay-title');
+const ovSub  = document.getElementById('overlay-sub');
+
+let phase = 'idle';           // 'upload' | 'processing' | 'idle'
+let fakeTimer = null;         // تایمر پیشرفتِ مصنوعی
+let overlayShownAt = 0;
+
+function showOverlay(title='در حال آپلود…', sub='لطفاً پنجره را نبندید.'){
+  overlayShownAt = performance.now();
+  ovTtl.textContent = title;
+  ovSub.textContent = sub;
+  setProgress(0);
+  ovEl.classList.remove('hidden');
+}
+
+function hideOverlay(minMs=600){
+  const dt = performance.now() - overlayShownAt;
+  const left = Math.max(0, minMs - dt);
+  setTimeout(()=>{
+    ovEl.classList.add('hidden');
+    setProgress(0);
+    stopFakeProgress();
+    phase = 'idle';
+  }, left);
+}
+
+function setProgress(p){
+  const clamped = Math.max(0, Math.min(100, Math.round(p)));
+  ovBar.style.width = clamped + '%';
+  ovPct.textContent = clamped + '٪';
+}
+
+function startProcessingPhase(){
+  phase = 'processing';
+  ovTtl.textContent = 'در حال پردازش…';
+  ovSub.textContent = 'در حال آماده‌سازی و ذخیره‌سازی اطلاعات.';
+  let cur = 90;
+  setProgress(cur);
+  stopFakeProgress();
+  fakeTimer = setInterval(()=>{
+    if (cur < 98){ cur += 1; setProgress(cur); }
+  }, 200);
+}
+
+function stopFakeProgress(){
+  if(fakeTimer){ clearInterval(fakeTimer); fakeTimer = null; }
+}
+
+</script>
+<script>
+(function(){
+  const form = document.getElementById('send-clothes-form');
+  if(!form) return;
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  // الزامی‌کردن فیلدها سمت فرانت
+  ['size','full_photo','fabric_photo'].forEach(name=>{
+    const el = form.querySelector(`[name="${name}"]`);
+    if(!el) return;
+    el.required = true;
+    el.addEventListener('invalid', ()=> el.setCustomValidity('پر کردن این فیلد اجباری است.'));
+    el.addEventListener('input',  ()=> el.setCustomValidity(''));
+  });
+
+  // اگر تابع فشرده‌سازی نداری، همین no-op بمونه
+  const maybeCompressToFD = window.maybeCompressToFD || (async ()=>{});
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+
+    const oldTxt = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'در حال ارسال…';
+
+    const action = form.getAttribute('action') || '/';
+    const fd = new FormData(form);
+
+    // فاز آپلود (پیشرفت واقعی)
+    showOverlay('در حال آپلود…','تصاویر در حال ارسال هستند.');
+    setProgress(5);
+
+    await maybeCompressToFD(fd, 'full_photo');   setProgress(10);
+    await maybeCompressToFD(fd, 'fabric_photo'); setProgress(15);
+    await maybeCompressToFD(fd, 'brand_photo');  setProgress(20);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    xhr.upload.onprogress = (e)=>{
+      if(!e.lengthComputable) return;
+      const p = Math.round((e.loaded / e.total) * 100);
+      setProgress(Math.min(90, p));     // تا سقف ۹۰٪
+      if (p >= 100 && phase !== 'processing'){
+        startProcessingPhase();          // فاز «در حال پردازش…»
+      }
+    };
+
+    xhr.onload = ()=>{
+      setProgress(100);
+      setTimeout(()=>{
+        hideOverlay(400);
+        if (typeof showPage === 'function') showPage('success-message');
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = oldTxt;
+      }, 150);
+    };
+
+    xhr.onerror = ()=>{
+      hideOverlay(300);
+      submitBtn.disabled = false;
+      submitBtn.textContent = oldTxt;
+      alert('اختلال شبکه رخ داد. لطفاً دوباره تلاش کنید.');
+    };
+
+    xhr.send(fd);
+  });
+})();
+</script>
+
+  <script>
+    feather.replace();
+    document.querySelectorAll('.js-price').forEach(el=>{
+      const n=Number((el.dataset.price||'0').toString().replace(/\D/g,'')); el.textContent=new Intl.NumberFormat('fa-IR').format(n);
+    });
+
+    const mainPage=document.getElementById('main-page');
+    const sendClothesPage=document.getElementById('send-clothes-page');
+    const successMessage=document.getElementById('success-message');
+    let currentPage=mainPage;
+
+/* ---------------- HERO: squares + 8 story bubbles (smaller, clearer, always moving, text-aware) ---------------- */
+/* --- HERO: پس‌زمینه مربعی + لیبل‌های داستان بدون دایره --- */
+(function () {
+  const canvas = document.getElementById('hero-bg'); if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  const EXCLUDE_SELECTORS = ['.slogan-wrap', '.hero-content p', '#hero-cta-button'];
+
+  let W = 0, H = 0, tiles = [];
+  const fabricPatterns = [];
+  let excludeRects = [];
+
+  function loadPatterns(callback) {
+    const sources = [
+      "{% static 'fabrics/fab1.jpg' %}",
+      "{% static 'fabrics/fab2.jpg' %}",
+      "{% static 'fabrics/fab3.jpg' %}",
+      "{% static 'fabrics/fab4.jpg' %}",
+      "{% static 'fabrics/fab5.jpg' %}",
+      "{% static 'fabrics/fab6.jpg' %}",
+      "{% static 'fabrics/fab7.jpg' %}",
+      "{% static 'fabrics/fab8.jpg' %}",
+      "{% static 'fabrics/fab9.jpg' %}",
+      "{% static 'fabrics/fab10.jpg' %}",
+      "{% static 'fabrics/fab11.jpg' %}",
+      "{% static 'fabrics/fab12.jpg' %}",
+      "{% static 'fabrics/fab13.jpg' %}",
+      "{% static 'fabrics/fab14.jpg' %}",
+      "{% static 'fabrics/fab15.jpg' %}",
+      "{% static 'fabrics/fab16.jpg' %}",
+      "{% static 'fabrics/fab17.jpg' %}",
+      "{% static 'fabrics/fab18.jpg' %}",
+      "{% static 'fabrics/fab19.jpg' %}",
+      "{% static 'fabrics/fab20.jpg' %}",
+    ];
+    let loaded = 0;
+    sources.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        fabricPatterns.push(ctx.createPattern(img, 'repeat'));
+        if (++loaded === sources.length) callback();
+      };
+    });
+  }
+
+  function toCanvasRect(domRect, pad = 12) {
+    const cRect = canvas.getBoundingClientRect();
+    return {
+      x: (domRect.left - cRect.left - pad) * DPR,
+      y: (domRect.top - cRect.top - pad) * DPR,
+      w: (domRect.width + pad * 2) * DPR,
+      h: (domRect.height + pad * 2) * DPR
+    };
+  }
+
+function computeExcludeRects() {
+  excludeRects = [];
+
+  // کل بلوک قهرمان (تیتر + متن + دکمه) را یکی کنیم
+  const parts = [
+    document.querySelector('.slogan-wrap'),
+    document.querySelector('.hero-content p'),
+    document.querySelector('#hero-cta-button')
+  ].filter(Boolean);
+
+  if (parts.length) {
+    // union rect
+    let left =  Infinity, top =  Infinity, right = -Infinity, bottom = -Infinity;
+    parts.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      left   = Math.min(left,   r.left);
+      top    = Math.min(top,    r.top);
+      right  = Math.max(right,  r.right);
+      bottom = Math.max(bottom, r.bottom);
+    });
+
+    // اگر چیزی پیدا شد، با پد کافی push کن
+    if (isFinite(left)) {
+      // پد زیادتر تا حتی یک ردیف هم زیر محتوا نیاد
+      const PAD = 28; // می‌تونی 32 یا 36 هم بگذاری
+      const domRect = new DOMRect(left, top, right - left, bottom - top);
+      excludeRects.push(toCanvasRect(domRect, PAD));
+    }
+  } else {
+    // اگر به هر دلیل المنت‌ها نبودند، کل hero را exclude کن (failsafe)
+    const hero = document.querySelector('.hero-content');
+    if (hero) excludeRects.push(toCanvasRect(hero.getBoundingClientRect(), 24));
+  }
+}
+
+
+  function setup() {
+  const r = canvas.getBoundingClientRect();
+  canvas.width = Math.floor(r.width * DPR);
+  canvas.height = Math.floor(r.height * DPR);
+  W = canvas.width; H = canvas.height;
+
+  // --- تعیین ستون‌ها بر اساس عرض ---
+  let desiredCols;
+  if (r.width < 480) {
+    desiredCols = 4;   // موبایل: مربع بزرگ‌تر → ردیف کمتر
+  } else if (r.width < 1024) {
+    desiredCols = 6;   // تبلت
+  } else {
+    desiredCols = 8;   // دسکتاپ
+  }
+
+  const squareSize = Math.ceil(W / desiredCols);
+  const cols = desiredCols;
+  const rows = Math.ceil(H / squareSize);
+
+tiles = [];
+const maxTopRows = 3;
+let maxBottomRows;
+if (r.width < 480) {
+  maxBottomRows = 4;   // تو موبایل پایین بیشتر پر بشه
+} else {
+  maxBottomRows = 2;   // دسکتاپ و تبلت معمولی
+}
+
+for (let rr = 0; rr < rows; rr++) {
+  for (let cc = 0; cc < cols; cc++) {
+    if (rr < maxTopRows || rr >= rows - maxBottomRows) {
+      tiles.push({
+        x: Math.random() * W * 2 - W,
+        y: Math.random() * H * 2 - H,
+        targetX: cc * squareSize,
+        targetY: rr * squareSize,
+        w: squareSize,
+        h: squareSize,
+        pattern: fabricPatterns[(rr * cols + cc) % fabricPatterns.length],
+        progress: 0
+      });
+    }
+  }
+}
+
+  computeExcludeRects();
+}
+
+  function rectsIntersect(ax, ay, aw, ah, bx, by, bw, bh) {
+    return !(ax + aw <= bx || bx + bw <= ax || ay + ah <= by || by + bh <= ay);
+  }
+  function isExcluded(t) {
+    for (const r of excludeRects) {
+      if (rectsIntersect(t.targetX, t.targetY, t.w, t.h, r.x, r.y, r.w, r.h)) return true;
+    }
+    return false;
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    for (const t of tiles) {
+      if (isExcluded(t)) continue;
+      t.progress = Math.min(1, t.progress + 0.002);
+      t.x += (t.targetX - t.x) * 0.02;
+      t.y += (t.targetY - t.y) * 0.02;
+      ctx.save();
+      ctx.fillStyle = t.pattern || '#ccc';
+      ctx.globalAlpha = 0.92 * t.progress;
+      ctx.fillRect(Math.floor(t.x), Math.floor(t.y), t.w, t.h);
+      ctx.restore();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  new ResizeObserver(() => setup()).observe(canvas);
+  window.addEventListener('resize', computeExcludeRects, { passive: true });
+  document.fonts?.ready?.then(computeExcludeRects);
+  window.addEventListener('scroll', computeExcludeRects, { passive: true });
+
+  loadPatterns(() => { setup(); loop(); });
+})();
+
+
+/* ---------------- Micro-Factory: شست‌وشوی چرخان (بدون توپ قرمز) ---------------- */
+(function(){
+  const canvas=document.getElementById('micro-factory-canvas'); if(!canvas) return;
+  const ctx=canvas.getContext('2d'); const DPR=Math.min(devicePixelRatio||1,2);
+  let W=0,H=0,isMobile=false,t=0,poly=[];
+
+  function resize(){
+    const r=canvas.getBoundingClientRect();
+    canvas.width=r.width*DPR; canvas.height=r.height*DPR;
+    W=canvas.width; H=canvas.height;
+    isMobile=(r.width<520);
+    buildPath();
+  }
+  new ResizeObserver(resize).observe(canvas); resize();
+
+  function buildPath(){
+    poly=[];
+    if(isMobile){
+      const y1=H*0.36, y2=H*0.72;
+      poly.push({x:W*0.10,y:y1},{x:W*0.90,y:y1},{x:W*0.90,y:y2},{x:W*0.12,y:y2});
+    }else{
+      const y=H*0.62;
+      poly.push({x:W*0.08,y:y},{x:W*0.92,y:y});
+    }
+  }
+
+  function lerp(a,b,t){return a+(b-a)*t}
+
+function drawModule(x,y,w,h,label,drawFn){
+  // کارت
+  ctx.fillStyle='#ffffff'; ctx.strokeStyle='#03192722'; ctx.lineWidth=2*DPR;
+  roundRect(x-w/2,y-h/2,w,h,12*DPR); ctx.fill(); ctx.stroke();
+
+  // محدودهٔ داخلی برای کلیپ (کمی پَد برای فاصله از لبه‌ها)
+  const pad = 10*DPR;
+  const inner = {
+    left:   x - w/2 + pad,
+    top:    y - h/2 + pad,
+    width:  w - 2*pad,
+    height: h - 2*pad,
+    right:  x + w/2 - pad,
+    bottom: y + h/2 - pad,
+  };
+
+  if(drawFn){
+    ctx.save();
+    roundRect(inner.left, inner.top, inner.width, inner.height, 10*DPR);
+    ctx.clip();                        // ⬅️ هرچی می‌کشیم فقط داخل این ناحیه دیده می‌شود
+    drawFn(x, y, inner);               // inner را هم به کال‌بک بده
+    ctx.restore();
+  }
+
+  // عنوان
+  if(label){
+    ctx.fillStyle='#1a3a3a'; ctx.font=`${12*DPR}px Shabnam`;
+    ctx.textAlign='center'; ctx.fillText(label, x, y-h/2-10*DPR);
+  }
+}
+  function tshirtPath(x,y,s){
+    ctx.fillStyle='#031927'; ctx.beginPath();
+    ctx.moveTo(x-18*s,y-8*s); ctx.lineTo(x+18*s,y-8*s);
+    ctx.lineTo(x+28*s,y+12*s); ctx.lineTo(x-28*s,y+12*s);
+    ctx.closePath(); ctx.fill();
+  }
+  function roundRect(x,y,w,h,r){
+    const rr=Math.min(r,w/2,h/2);
+    ctx.beginPath(); ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr);
+    ctx.arcTo(x,y+h,x,y,rr); ctx.arcTo(x,y,x+w,y,rr); ctx.closePath();
+  }
+// موج دوخت (کوچیک و کند)
+function drawSewWave(left, baselineY, width, amp, tick, DPR, opts={}){
+  const period = (opts.period ?? 56) * DPR; // طول یک سیکل (بزرگ‌تر = قله‌های دورتَر)
+  const speed  = opts.speed  ?? 0.22;       // سرعت خیلی پایین‌تر از قبل (قبلی ~1.5 بود)
+  const lineW  = (opts.lineWidth ?? 2.0) * DPR;
+
+  const xStart = left - ((tick * speed) % period);
+  const ctx = drawSewWave.ctx;
+
+  ctx.strokeStyle = '#e53e3e';
+  ctx.lineWidth   = lineW;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  const p = period;
+  const aSmall = amp * 0.18;
+  const aBig   = amp * 1.00;
+  const aDeep  = amp * 0.65;
+  const aT     = amp * 0.45;
+
+  let x = xStart;
+  ctx.beginPath();
+  ctx.moveTo(x, baselineY);
+
+  while (x < left + width + p){
+    x += p*0.10; ctx.lineTo(x, baselineY);                // baseline
+    x += p*0.10; ctx.lineTo(x, baselineY + aSmall);       // Q
+    x += p*0.12; ctx.lineTo(x, baselineY - aBig);         // R
+    x += p*0.10; ctx.lineTo(x, baselineY + aDeep);        // S
+    x += p*0.10; ctx.lineTo(x, baselineY);                // back
+    x += p*0.10; ctx.lineTo(x, baselineY - aT);           // T
+    x += p*0.08; ctx.lineTo(x, baselineY);                // tail
+  }
+  ctx.stroke();
+}
+drawSewWave.ctx = ctx; // تا به کانتکست دسترسی داشته باشد
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // grid
+    ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(3,25,39,0.06)'; ctx.lineWidth=1;
+    for(let x=0;x<W;x+=40*DPR){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=40*DPR){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    // conveyor
+    ctx.strokeStyle='rgba(3,25,39,0.18)'; ctx.lineWidth=6*DPR; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(poly[0].x,poly[0].y);
+    for(let i=1;i<poly.length;i++) ctx.lineTo(poly[i].x,poly[i].y);
+    ctx.stroke();
+
+    const baseW=isMobile?110*DPR:140*DPR, baseH=isMobile?62*DPR:70*DPR;
+
+    if(isMobile){
+      const y1=poly[0].y, y2=poly[poly.length-1].y;
+      drawModule(W*0.18,y1,baseW,baseH,'تحویل',(cx,cy)=>{
+        const wob=Math.sin(t/20)*4*DPR;
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(wob/80);
+        ctx.fillStyle='#fbf8f5';ctx.strokeStyle='#03192733';ctx.lineWidth=2*DPR;
+        roundRect(-22*DPR,-16*DPR,44*DPR,32*DPR,6*DPR);ctx.fill();ctx.stroke();
+        ctx.restore();
+      });
+      drawModule(W*0.50,y1,baseW,baseH,'شست‌وشو',(cx,cy)=>{
+        const R=18*DPR, n=8, ang=t/12;
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(Math.sin(t/40)*0.09);
+        ctx.strokeStyle='rgba(53,179,126,.35)';ctx.lineWidth=2*DPR;
+        ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.stroke();
+        for(let i=0;i<n;i++){const a=ang+i*2*Math.PI/n;const px=Math.cos(a)*R*0.8, py=Math.sin(a)*R*0.8;ctx.beginPath();ctx.arc(px,py,4*DPR,0,Math.PI*2);ctx.stroke();}
+        ctx.restore();
+      });
+      drawModule(W*0.82,y1,baseW,baseH,'جداسازی',(cx,cy)=>{
+        const s=14*DPR;
+        for(let r=0;r<2;r++)for(let c=0;c<3;c++){
+          const on=((Math.floor(t/22)+r+c)%2===0);
+          ctx.fillStyle=on?'#031927':'#f0e9e0';
+          ctx.fillRect(cx-26*DPR+c*s,cy-10*DPR+r*s,s-4*DPR,s-4*DPR);
+        }
+      });
+drawModule(W*0.68, y2, baseW, baseH, 'دوخت', (cx, cy, inner) => {
+  const innerW = inner.width * 0.90;            // 90% عرض داخلی
+  const amp    = inner.height * 0.45;           // دامنه متناسب با ارتفاع داخل
+  const left   = inner.left + (inner.width - innerW)/2;
+  drawSewWave(left, cy, innerW, amp, t, DPR, {
+    speed: 0.18, period: 60, lineWidth: 1.8
+  });
+});
+      drawModule(W*0.28,y2,baseW,baseH,'محصول',(cx,cy)=>{tshirtPath(cx,cy,0.6*DPR);});
+    }else{
+      const y=poly[0].y;
+      drawModule(W*0.12,y,baseW,baseH,'تحویل',(cx,cy)=>{
+        const wob=Math.sin(t/24)*5*DPR;
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(wob/80);
+        ctx.fillStyle='#fbf8f5';ctx.strokeStyle='#03192733';ctx.lineWidth=2*DPR;
+        roundRect(-22*DPR,-16*DPR,44*DPR,32*DPR,6*DPR);ctx.fill();ctx.stroke();
+        ctx.restore();
+      });
+      drawModule(W*0.30,y,baseW,baseH,'شست‌وشو',(cx,cy)=>{
+        const R=20*DPR, n=9, ang=t/13;
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(Math.sin(t/45)*0.08);
+        ctx.strokeStyle='rgba(53,179,126,.35)';ctx.lineWidth=2*DPR;
+        ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.stroke();
+        for(let i=0;i<n;i++){const a=ang+i*2*Math.PI/n;const px=Math.cos(a)*R*0.82, py=Math.sin(a)*R*0.82;ctx.beginPath();ctx.arc(px,py,5*DPR,0,Math.PI*2);ctx.stroke();}
+        ctx.restore();
+      });
+      drawModule(W*0.50,y,baseW,baseH,'جداسازی',(cx,cy)=>{
+        const s=16*DPR;
+        for(let r=0;r<2;r++)for(let c=0;c<3;c++){
+          const on=((Math.floor(t/26)+r+c)%2===0);
+          ctx.fillStyle=on?'#031927':'#f0e9e0';
+          ctx.fillRect(cx-28*DPR+c*s,cy-12*DPR+r*s,s-5*DPR,s-5*DPR);
+        }
+      });
+drawModule(W*0.70, y, baseW, baseH, 'دوخت', (cx, cy, inner) => {
+  const innerW = inner.width * 0.90;
+  const amp    = inner.height * 0.45;
+  const left   = inner.left + (inner.width - innerW)/2;
+  drawSewWave(left, cy, innerW, amp, t, DPR, {
+    speed: 0.20, period: 62, lineWidth: 2.0
+  });
+});
+      drawModule(W*0.88,y,baseW,baseH,'محصول',(cx,cy)=>{tshirtPath(cx,cy,0.7*DPR);});
+    }
+
+    // توپ قرمز حذف شده است ✅
+
+    t+=1.6; requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
+
+
+
+
+
+
+
+
+
+   /* ---------------- left progress thread (rAF-friendly) ---------------- */
+(function(){
+  const path   = document.getElementById('thread-path');
+  const needle = document.getElementById('needle');
+  if(!path || !needle) return;
+
+  let len = path.getTotalLength();
+  let ticking = false;   // برای rAF
+  function measure(){
+    // طول مسیر ممکن است با ریسایز تغییر کند
+    len = path.getTotalLength();
+    requestUpdate();
+  }
+
+  function update(){
+    // درصد اسکرول
+    const docH   = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    const winH   = window.innerHeight;
+    const maxS   = Math.max(1, docH - winH);
+    const p      = Math.min(1, Math.max(0, window.scrollY / maxS));
+
+    const dash   = len;
+    path.setAttribute('stroke-dasharray', dash);
+    path.setAttribute('stroke-dashoffset', (1 - p) * dash);
+
+    const pos = path.getPointAtLength(p * len);
+    needle.setAttribute('transform', `translate(${pos.x-6},${pos.y})`);
+
+    ticking = false;
+  }
+
+  function requestUpdate(){
+    if(!ticking){
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive:true });
+  window.addEventListener('resize', () => { measure(); }, { passive:true });
+  // اجرا اولیه
+  measure();
+  update();
+})();
+
+
+    /* ---------------- reveal + section animations ---------------- */
+    function playHeroAnimation(){
+  const container = document.querySelector('.hero-content');
+  if(!container) return;
+  container.style.opacity = '0';
+  container.style.transform = 'translateY(10px)';
+  // یک تیک برای paint
+  requestAnimationFrame(()=>{
+    container.style.transition = 'opacity .5s ease, transform .5s ease';
+    container.style.opacity = '1';
+    container.style.transform = 'translateY(0)';
+  });
+}
+
+/* --- ساده‌سازی انیمیشن سکشن‌ها: فقط فیداین --- */
+const animatedSections = document.querySelectorAll('.animated-section');
+const io = new IntersectionObserver((entries,obs)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const s = entry.target;
+      s.style.transition = 'opacity .5s linear';
+      s.style.opacity = '1';
+      // کارت‌ها و محتوا بدون استگر و ترنزلیت
+      const kids = s.querySelectorAll('.animated-card, h3, p, img, h4, div:not(.animated-card)');
+      kids.forEach(k=>{
+        k.style.opacity = '1';
+        k.style.transform = 'none';
+        k.style.transition = 'none';
+      });
+      obs.unobserve(s);
+    }
+  });
+},{threshold:0.15});
+animatedSections.forEach(s=>io.observe(s));
+(function(){
+  function autoOpenSend(){
+    const params = new URLSearchParams(location.search);
+    const wantsSend =
+      params.get('open') === 'send' ||
+      location.hash === '#send-clothes-page' ||
+      location.hash === '#send';
+
+    if(!wantsSend) return;
+
+    if (typeof showPage === 'function') {
+      showPage('send-clothes-page');
+    } else {
+      document.getElementById('send-clothes-page')?.scrollIntoView({behavior:'smooth'});
+    }
+
+    // تمیز کردن URL اگر با ?open=send اومده باشه
+    if(history.replaceState && params.get('open') === 'send'){
+      params.delete('open');
+      history.replaceState({}, '', location.pathname + '#send-clothes-page');
+    }
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', autoOpenSend);
+  } else {
+    autoOpenSend();
+  }
+})();
+function showPage(id, cb=null){
+  const newPage = document.getElementById(id); if(!newPage || newPage===currentPage) return;
+  const formEls = newPage.querySelectorAll('.form-group,.form-upload,.form-button');
+
+  anime({
+    targets: currentPage,
+    opacity: [1,0],
+    translateY: [0,-30],
+    duration: 400,
+    easing: 'easeInExpo',
+    complete: () => {
+      currentPage.style.display = 'none';
+      newPage.style.display = 'block';
+      currentPage = newPage;
+      window.scrollTo(0,0);
+
+      anime({
+        targets: newPage,
+        opacity: [0,1],
+        translateY: [30,0],
+        duration: 600,
+        easing: 'easeOutExpo',
+        complete: () => { if(cb) cb(); }
+      });
+
+      if(id === 'send-clothes-page' && formEls.length>0){
+        anime({targets: formEls, opacity:[0,1], translateY:[30,0], delay: anime.stagger(100,{start:200}), easing:'easeOutExpo'});
+      }
+      // ❌ دیگه کاری برای success-message نکنیم (آیکن/قلب نداریم)
+    }
+  });
+}
+
+    document.getElementById('hero-cta-button').addEventListener('click',()=>showPage('send-clothes-page'));
+
+    const form=document.getElementById('send-clothes-form');
+// جلوگیری از نصب دوباره در صورت دوباره لود شدن اسکریپت
+if (!window.__sendHandlerInstalled) {
+  window.__sendHandlerInstalled = true;
+
+  const form = document.getElementById('send-clothes-form');
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  function updateState(){
+    const ok = form.checkValidity();
+    submitBtn.disabled = !ok;
+    submitBtn.classList.toggle('opacity-60', !ok);
+    submitBtn.classList.toggle('cursor-not-allowed', !ok);
+  }
+  updateState();
+  form.addEventListener('input',  updateState, {passive:true});
+  form.addEventListener('change', updateState, {passive:true});
+
+  // پیام خطای فارسی
+  ['size','full_photo','fabric_photo'].forEach(name=>{
+    const el = form.querySelector(`[name="${name}"]`);
+    if(!el) return;
+    el.addEventListener('invalid', ()=> el.setCustomValidity('پر کردن این فیلد اجباری است.'));
+    el.addEventListener('input',  ()=> el.setCustomValidity(''));
+  });
+
+  // اگر این توابع را نداری، نال‌اپ کن
+  const showOverlay = window.showOverlay || function(){};
+  const hideOverlay = window.hideOverlay || function(){};
+  const setProgress = window.setProgress || function(){};
+  const maybeCompressToFD = window.maybeCompressToFD || (async ()=>{});
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    const oldTxt = submitBtn.textContent;
+    submitBtn.textContent = 'در حال ارسال…';
+
+    const action = form.getAttribute('action') || '/';
+    const fd = new FormData(form);
+
+    // (اختیاری) فشرده‌سازی کلاینتی برای سرعت
+    showOverlay('در حال آماده‌سازی تصاویر…'); setProgress(5);
+    await maybeCompressToFD(fd, 'full_photo');   setProgress(15);
+    await maybeCompressToFD(fd, 'fabric_photo'); setProgress(25);
+    await maybeCompressToFD(fd, 'brand_photo');  setProgress(30);
+
+    showOverlay('در حال آپلود…');
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    xhr.upload.onprogress = (e)=>{
+      if(e.lengthComputable){
+        const p = Math.min(99, Math.round((e.loaded / e.total) * 100));
+        setProgress(p);
+      }
+    };
+
+    xhr.onload = ()=>{
+      hideOverlay();
+      submitBtn.disabled = false;
+      submitBtn.textContent = oldTxt;
+
+      if(xhr.status >= 200 && xhr.status < 300){
+        if (typeof showPage === 'function') showPage('success-message');
+        form.reset();
+        updateState();
+        // پاک‌کردن نام فایل‌ها اگر نشان می‌دهی
+        try{
+          updateFileName({files:[]}, 'file-name-1');
+          updateFileName({files:[]}, 'file-name-2');
+          updateFileName({files:[]}, 'file-name-brand');
+        }catch(_){}
+      }else{
+        alert('ارسال ناموفق بود. لطفاً دوباره تلاش کنید.');
+      }
+    };
+
+    xhr.onerror = ()=>{
+      hideOverlay();
+      submitBtn.disabled = false;
+      submitBtn.textContent = oldTxt;
+      alert('اختلال شبکه رخ داد.');
+    };
+
+    xhr.send(fd);
+  });
+}
+
+
+    function updateFileName(input,id){const p=document.getElementById(id); p.textContent=input.files.length>0?input.files[0].name:'';}
+    function setBrandUnknown(){document.getElementById('brand').value='نمیدونم';}
+    function toggleBrandless(){const a=document.getElementById('brand-photo'); const l=document.getElementById('brand-photo-label'); const p=document.getElementById('file-name-brand'); const d=a.disabled; a.disabled=!d;
+      if(!d){l.classList.add('cursor-not-allowed','bg-gray-200'); p.textContent='این لباس برند ندارد.'; a.value=''; updateFileName(a,'file-name-brand');}
+      else{l.classList.remove('cursor-not-allowed','bg-gray-200'); p.textContent='';}
+    }
+
+document.querySelectorAll('a.nav-link').forEach(a=>{
+  a.addEventListener('click', e=>{
+    const href = a.getAttribute('href') || '';
+
+    // فقط لینک‌های داخل صفحه (#...) را هندل کن
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const el = document.querySelector(href);
+      const go = ()=>{ if(el) el.scrollIntoView({behavior:'smooth'}); };
+      if(currentPage.id!=='main-page'){ showPage('main-page', go); } else go();
+    }
+    // اگر /products یا لینک خارجی بود، کاری نکن → مرورگر خودش می‌رود
+  });
+});
+
+    document.addEventListener('DOMContentLoaded',playHeroAnimation);
+
+(function(){
+  const form = document.getElementById('send-clothes-form');
+  if(!form) return;
+
+  
+  // --- client-side image compress (max side: 1400px, jpeg ~82%)
+  async function compressImage(file, {maxSide=1400, quality=0.82}={}){
+    // سعی می‌کنیم جهت‌گیری EXIF رعایت شود
+    try{
+      if('createImageBitmap' in window){
+        const bmp = await createImageBitmap(file, {imageOrientation:'from-image'});
+        const ratio = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+        const w = Math.round(bmp.width * ratio), h = Math.round(bmp.height * ratio);
+        const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d'); ctx.drawImage(bmp, 0, 0, w, h);
+        return await new Promise(res=> canvas.toBlob(res, 'image/jpeg', quality));
+      }
+    }catch(_){/* fallback below */}
+    // فallback
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    await new Promise((ok,err)=>{ img.onload=ok; img.onerror=err; img.src=url; });
+    const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
+    const w = Math.round(img.width * ratio), h = Math.round(img.height * ratio);
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+    return await new Promise(res=> canvas.toBlob(res, 'image/jpeg', quality));
+  }
+
+  async function maybeCompressToFD(fd, field){
+    const input = form.querySelector(`input[name="${field}"]`);
+    if(!input || !input.files || !input.files[0]) return;
+    const file = input.files[0];
+    // فقط اگر بزرگ بود فشرده کن
+    if(file.size > 300*1024){
+      const blob = await compressImage(file, {maxSide: 1400, quality: 0.82});
+      if(blob){
+        const safeName = (file.name.replace(/\.\w+$/, '') || 'image') + '.jpg';
+        fd.set(field, new File([blob], safeName, {type:'image/jpeg'}));
+      }
+    }
+  }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    const action = form.getAttribute('action') || '/'; // ویوت همینیه که داری
+    const fd = new FormData(form);
+
+    showOverlay('در حال آماده‌سازی تصاویر…'); setProgress(5);
+    // فشرده‌سازی روی کلاینت → آپلود خیلی سریع‌تر می‌شود
+    await maybeCompressToFD(fd, 'full_photo');   setProgress(15);
+    await maybeCompressToFD(fd, 'fabric_photo'); setProgress(25);
+    await maybeCompressToFD(fd, 'brand_photo');  setProgress(30);
+
+    showOverlay('در حال آپلود…');
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', action, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // فقط جهت تشخیص سمت بک
+
+    xhr.upload.onprogress = (e)=>{
+      if(e.lengthComputable){
+        // تا 99% پیش برو (باقی زمان پردازش سمت سرور)
+        const p = Math.min(99, Math.round((e.loaded / e.total) * 100));
+        setProgress(p);
+      }
+    };
+
+    xhr.onload = ()=>{
+      hideOverlay();
+      if(xhr.status >= 200 && xhr.status < 300){
+        // بلافاصله موفقیت را نشان بده
+        if (typeof showPage === 'function') {
+          showPage('success-message');
+        } else {
+          // اگر تک‌صفحه نیستی:
+          alert('ثبت شد!');
+        }
+        form.reset();
+      }else{
+        alert('ارسال ناموفق بود. لطفاً دوباره تلاش کنید.');
+      }
+    };
+
+    xhr.onerror = ()=>{ hideOverlay(); alert('اختلال شبکه رخ داد.'); };
+    xhr.send(fd);
+  });
+})();
+
+    // --- خط EKG زیر تیتر ---
+(function(){
+  const cvs = document.getElementById('weave-ekg');
+  const title = document.getElementById('hero-slogan');
+  if(!cvs || !title) return;
+
+  const ctx = cvs.getContext('2d');
+  const DPR = Math.min(window.devicePixelRatio||1, 2);
+
+  let W=0, H=0, t=0;
+  // پارامترها (مثل دوخت، اما برای هِیرو)
+  let period = 56 * DPR;   // فاصله قله‌ها (بزرگ‌تر = قله‌های دورتَر)
+  let speed  = 0.18;       // سرعت حرکت (کند)
+  let lineW  = 2.0 * DPR;  // ضخامت خط
+  let ampMul = 0.45;       // دامنه نسبت به ارتفاع
+
+  function size(){
+    const r = title.getBoundingClientRect();
+    const cssH = 26; // باید با CSS هم‌خوان باشد
+    cvs.style.width  = Math.ceil(r.width) + 'px';
+    cvs.style.height = cssH + 'px';
+    cvs.width  = Math.ceil(r.width * DPR);
+    cvs.height = Math.ceil(cssH * DPR);
+    W = cvs.width; H = cvs.height;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle = '#e53e3e';
+    ctx.lineWidth   = lineW;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+
+    const mid = H * 0.55;
+    const amp = H * ampMul;
+
+    // شروع موج با شیفتِ زمان برای اسکرول به چپ
+    let x = -((t * speed) % period);
+    ctx.beginPath();
+    ctx.moveTo(x, mid);
+
+    while (x < W + period){
+      const p = period;
+      x += p*0.10; ctx.lineTo(x, mid);                 // baseline
+      x += p*0.10; ctx.lineTo(x, mid + amp*0.20);      // Q
+      x += p*0.12; ctx.lineTo(x, mid - amp*1.00);      // R
+      x += p*0.10; ctx.lineTo(x, mid + amp*0.65);      // S
+      x += p*0.10; ctx.lineTo(x, mid);                 // back
+      x += p*0.10; ctx.lineTo(x, mid - amp*0.45);      // T
+      x += p*0.08; ctx.lineTo(x, mid);                 // tail
+    }
+    ctx.stroke();
+
+    t += 1; requestAnimationFrame(draw);
+  }
+
+  function boot(){ size(); draw(); }
+  // واکنش به تغییرات
+  window.addEventListener('resize', size, {passive:true});
+  window.addEventListener('orientationchange', size, {passive:true});
+  document.fonts?.ready?.then(size);
+  window.addEventListener('load', boot, {passive:true});
+})();
+/* --- MISSION: لیبل‌های شناورِ قابل‌کلیک (بدون دایره/هاله) — بک‌گراند بژ + لیبل قرمز + Dedup --- */
+(function(){
+  const canvas = document.getElementById('mission-canvas'); if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const DPR = Math.min(window.devicePixelRatio||1, 2);
+  const PRODUCTS_URL = "/products/";
+
+  const BG = "#D9C7A1";      // بژ پس‌زمینه
+  const BTN_RED = "#66001f";  // ★ رنگ دکمه برای پس‌زمینه لیبل‌ها
+
+  // داده‌ها از بک‌اند
+  const dataEl = document.getElementById('mission-bubbles-data');
+  const rawItems = dataEl ? JSON.parse(dataEl.textContent) : [];
+
+  // فقط nameها، حذف خالی‌ها و تکراری‌ها (case-insensitive)
+  const seen = new Set();
+  const LABELS = [];
+  for (const it of rawItems){
+    const n = (it && it.name ? String(it.name) : "").trim();
+    const key = n.toLowerCase();
+    if(n && !seen.has(key)){
+      seen.add(key);
+      LABELS.push(n);
+    }
+  }
+  if(!LABELS.length){
+    LABELS.push('داستان','خاطره','لحظه','دوخت'); // fallback
+  }
+
+  let W=0, H=0, nodes=[], hover=-1;
+
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    canvas.width  = Math.floor(r.width  * DPR);
+    canvas.height = Math.floor(r.height * DPR);
+    W = canvas.width; H = canvas.height;
+    init();
+  }
+  new ResizeObserver(resize).observe(canvas); resize();
+
+  function init(){
+    nodes = [];
+    ctx.font = `${Math.round(18*DPR)}px Shabnam, IRANYekanX, Vazirmatn, sans-serif`;
+    const count = Math.min(12, Math.max(4, LABELS.length));
+    for(let i=0;i<count;i++){
+      const text = LABELS[i % LABELS.length];
+      const w = ctx.measureText(text).width;
+      const h = 28 * DPR;
+      nodes.push({
+        text,
+        x: Math.random()*W, y: Math.random()*H,
+        vx:(Math.random()-.5)*.45*DPR, vy:(Math.random()-.5)*.45*DPR,
+        w, h,
+        hit:{x:0,y:0,w:0,h:0}
+      });
+    }
+  }
+
+  function wrap(n){
+    if(n.x < -60) n.x = W+60;
+    if(n.x > W+60) n.x = -60;
+    if(n.y < -40) n.y = H+40;
+    if(n.y > H+40) n.y = -40;
+  }
+
+  function drawBackground(){
+    ctx.fillStyle = BG;
+    ctx.fillRect(0,0,W,H);
+    ctx.save();
+    ctx.strokeStyle='rgba(0,0,0,0.08)'; // خطوط گرید روی بژ
+    ctx.lineWidth=1;
+    const step=24*DPR;
+    for(let x=0;x<W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.restore();
+  }
+
+  function drawLabel(n, idx){
+    const padX=12*DPR, padY=8*DPR;
+    const x = n.x - n.w/2 - padX;
+    const y = n.y - n.h/2 - padY;
+    const w = n.w + padX*2, h = n.h + padY*2;
+    n.hit = {x,y,w,h};
+
+    const isHover = (idx===hover);
+
+    ctx.save();
+    const r = 10*DPR;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);   ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+
+    // ★ پس‌زمینه‌ی لیبل = رنگ دکمه (در هاور کمی روشن‌تر)
+    ctx.fillStyle = isHover ? '#7d0b2a' : BTN_RED;
+    ctx.shadowColor = 'rgba(0,0,0,0.18)';
+    ctx.shadowBlur = 6*DPR;
+    ctx.fill();
+
+    // خط خیلی ظریف برای کنتراست
+    ctx.strokeStyle='rgba(255,255,255,0.18)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    // متن سفید و خوانا
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#fff';
+    ctx.font = `${Math.round(18*DPR)}px Shabnam, IRANYekanX, Vazirmatn, sans-serif`;
+    ctx.fillText(n.text, n.x, n.y);
+    ctx.restore();
+  }
+
+  function loop(){
+    drawBackground();
+
+    nodes.forEach((n,i)=>{
+      n.vx += (Math.random()-.5)*0.02;
+      n.vy += (Math.random()-.5)*0.02;
+      const max=0.8*DPR, sp=Math.hypot(n.vx,n.vy);
+      if(sp>max){ n.vx=n.vx/sp*max; n.vy=n.vy/sp*max; }
+      n.x+=n.vx; n.y+=n.vy; wrap(n);
+
+      drawLabel(n,i);
+    });
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  function hit(px,py){
+    for(let i=nodes.length-1;i>=0;i--){
+      const h=nodes[i].hit;
+      if(px>=h.x && px<=h.x+h.w && py>=h.y && py<=h.y+h.h) return i;
+    }
+    return -1;
+  }
+
+  canvas.addEventListener('mousemove', e=>{
+    const r=canvas.getBoundingClientRect();
+    const x=(e.clientX-r.left)*DPR, y=(e.clientY-r.top)*DPR;
+    hover = hit(x,y);
+    canvas.style.cursor = hover>-1 ? 'pointer' : 'default';
+  }, {passive:true});
+
+  canvas.addEventListener('click', ()=>{
+    if(hover>-1) window.location.href = PRODUCTS_URL; // کلیک → صفحه محصولات
+  });
+})();
+
+
+document.addEventListener('DOMContentLoaded', function(){
+  const modal   = document.getElementById('story-modal');
+  const bodyEl  = document.getElementById('story-body');
+  const titleEl = document.getElementById('story-title');
+  if(!modal || !bodyEl || !titleEl) return;
+
+  function openStory(name, story){
+    titleEl.textContent = `داستان «${name}»`;
+    bodyEl.textContent  = story && story.trim() ? story : 'هنوز داستانی ثبت نشده است.';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeStory(){
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  // کلیک روی دکمه‌های داستان (event delegation)
+  document.body.addEventListener('click', async (e)=>{
+    const btn = e.target.closest('[data-story-btn]');
+    if(!btn) return;
+
+    const id   = btn.dataset.id;
+    const name = btn.dataset.name || '';
+    let story  = btn.dataset.story || '';
+
+    if(!story){  // از بک بگیر اگر تو HTML نبود
+      try{
+        const res = await fetch(`/products/${id}/story/`, { headers:{ 'Accept':'application/json' }});
+        if(res.ok){
+          const data = await res.json();
+          story = data.story || '';
+        }
+      }catch(err){ /* ignore */ }
+    }
+    openStory(name, story);
+  });
+
+  // بستن مودال
+  modal.addEventListener('click', (e)=>{
+    if(e.target.hasAttribute('data-close-story') || e.target === modal.querySelector('[data-close-story]') || e.target === modal.firstElementChild){
+      closeStory();
+    }
+  });
+  window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !modal.classList.contains('hidden')) closeStory(); });
+});
+
+  </script>
+<div id="story-modal" class="fixed inset-0 z-[1000] hidden">
+  <div class="absolute inset-0 bg-black/40" data-close-story></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="story-title" class="text-xl md:text-2xl font-bold text-brand-dark">داستان لباس</h3>
+        <button class="square-button btn-red px-3 py-1.5 text-sm" data-close-story>بستن</button>
+      </div>
+      <div id="story-body" class="text-brand-primary/90 leading-8 whitespace-pre-line"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
