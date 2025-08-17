@@ -118,16 +118,10 @@ STATIC_URL = 'static/'
 
 STATIC_ROOT = '../dobare/static/'
 
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-MEDIA_URL  = '/media/'
-# مسیر مطلق بده؛ نسبی نذار
-MEDIA_ROOT = BASE_DIR / 'public' / 'dobare' / 'media'
 
 
-# MEDIA_URL = 'media/'
-# MEDIA_ROOT = '../dobare/media/'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = '../dobare/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
