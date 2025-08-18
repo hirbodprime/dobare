@@ -32,7 +32,10 @@ __pycache__/
 
 __pycache__/
 *.py[cod]
-
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
 
 # Django migration files (except __init__.py)
 */migrations/*
