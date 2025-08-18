@@ -28,3 +28,20 @@ __pycache__/
 # Django migrations (keep only __init__.py)
 */migrations/*
 !*/migrations/__init__.py
+
+
+__pycache__/
+*.py[cod]
+
+
+# Django migration files (except __init__.py)
+*/migrations/*
+!*/migrations/__init__.py
+
+# Uploaded media files
+media/
+
+# Logs
+*.log
+stderr.log
+*.pyo
