@@ -127,7 +127,7 @@
         class="square-button btn-red text-white text-sm px-3 py-2 font-bold shadow"
         data-story-btn
         data-id="{{ product.id }}"
-        {% if product.story %}data-story="{{ product.story|escapejs }}"{% endif %}
+        {% if product.story %}data-story="{{ product.story|linebreaksbr }}"{% endif %}
         data-name="{{ product.name|escapejs }}">
   داستان لباس
 </button>
